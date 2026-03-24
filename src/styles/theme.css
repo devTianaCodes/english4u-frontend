@@ -9,9 +9,9 @@
   --color-secondary: #1f8a78;
   --color-border: rgba(94, 68, 46, 0.14);
   --shadow-soft: 0 24px 60px rgba(22, 48, 66, 0.1);
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
+  --radius-xl: 0;
+  --radius-lg: 0;
+  --radius-md: 0;
   --content-width: 1180px;
   --font-display: "Avenir Next", "Trebuchet MS", sans-serif;
   --font-body: "Avenir Next", "Segoe UI", sans-serif;

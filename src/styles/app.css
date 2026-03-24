@@ -11,7 +11,7 @@
   justify-content: space-between;
   gap: 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(255, 253, 250, 0.82);
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow-soft);
@@ -30,7 +30,7 @@
   height: 2.4rem;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: 0;
   background: linear-gradient(135deg, var(--color-accent), #ffbe7c);
   color: white;
 }
@@ -44,7 +44,7 @@
 
 .nav-link {
   padding: 0.45rem 0.8rem;
-  border-radius: 999px;
+  border-radius: 0;
   color: var(--color-text-muted);
   transition: background-color 160ms ease, color 160ms ease;
 }
@@ -69,7 +69,7 @@
 
 .session-pill {
   padding: 0.55rem 0.8rem;
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(22, 48, 66, 0.08);
   color: var(--color-text-muted);
   font-size: 0.9rem;
@@ -210,7 +210,7 @@
 .button-ghost,
 .quiz-option {
   border: 0;
-  border-radius: 999px;
+  border-radius: 0;
   transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
@@ -263,7 +263,7 @@
   width: 100%;
   padding: 0.95rem 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.88);
 }
 
@@ -271,7 +271,7 @@
   width: 100%;
   padding: 0.95rem 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.88);
 }
 
@@ -367,7 +367,7 @@
   width: 8.5rem;
   height: 8.5rem;
   padding: 0.55rem;
-  border-radius: 50%;
+  border-radius: 0;
 }
 
 .progress-ring-inner {
@@ -376,7 +376,7 @@
   display: grid;
   place-items: center;
   gap: 0.2rem;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--color-surface-strong);
   text-align: center;
 }
@@ -405,7 +405,7 @@
   }
 
   .topbar {
-    border-radius: 28px;
+    border-radius: 0;
     flex-direction: column;
     align-items: stretch;
   }
