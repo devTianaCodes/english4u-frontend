@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import SectionCard from "../components/layout/SectionCard.jsx";
 import ProgressRing from "../components/ui/ProgressRing.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
@@ -34,9 +35,21 @@ export default function DashboardPage() {
   }, []);
 
   const continueCards = [
-    { title: "Continue unit", text: `${dashboard?.currentCourse ?? "Your current course"} is ready for the next lesson.` },
-    { title: "Review vocabulary", text: "Use short review loops to reinforce the words you met in recent lessons." },
-    { title: "Take quiz", text: "Finish the current lesson to unlock the next checkpoint." }
+    {
+      title: "Continue unit",
+      text: `${dashboard?.currentCourse ?? "Your current course"} is ready for the next lesson.`,
+      to: "/lessons/a2-confidence-unit-2-lesson-1"
+    },
+    {
+      title: "Review vocabulary",
+      text: "Use short review loops to reinforce the words you met in recent lessons.",
+      to: "/courses"
+    },
+    {
+      title: "Take quiz",
+      text: "Finish the current lesson to unlock the next checkpoint.",
+      to: "/quizzes/a2-confidence-unit-2-lesson-1-quiz"
+    }
   ];
 
   return (
@@ -60,7 +73,16 @@ export default function DashboardPage() {
 
       <div className="grid grid-3">
         {continueCards.map((card) => (
-          <SectionCard key={card.title} eyebrow="Continue learning" title={card.title} footer={<button className="button button-ghost">Open</button>}>
+          <SectionCard
+            key={card.title}
+            eyebrow="Continue learning"
+            title={card.title}
+            footer={
+              <Link className="button button-ghost" to={card.to}>
+                Open
+              </Link>
+            }
+          >
             <p>{card.text}</p>
           </SectionCard>
         ))}
