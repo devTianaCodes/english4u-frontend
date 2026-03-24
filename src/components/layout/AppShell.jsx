@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../../features/auth/AuthProvider.jsx";
 
 const learnerLinks = [
   { to: "/dashboard", label: "Dashboard" },
@@ -13,6 +14,14 @@ const adminLinks = [
 ];
 
 export default function AppShell() {
+  const navigate = useNavigate();
+  const { isLoading, logout, user } = useAuth();
+
+  async function handleLogout() {
+    await logout();
+    navigate("/");
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -27,20 +36,37 @@ export default function AppShell() {
               {link.label}
             </NavLink>
           ))}
-          {adminLinks.map((link) => (
-            <NavLink key={link.to} className="nav-link nav-link-muted" to={link.to}>
-              {link.label}
-            </NavLink>
-          ))}
+          {user?.role === "admin"
+            ? adminLinks.map((link) => (
+                <NavLink key={link.to} className="nav-link nav-link-muted" to={link.to}>
+                  {link.label}
+                </NavLink>
+              ))
+            : null}
         </nav>
 
         <div className="topbar-actions">
-          <NavLink className="button button-ghost" to="/login">
-            Log in
-          </NavLink>
-          <NavLink className="button" to="/register">
-            Get started
-          </NavLink>
+          {isLoading ? (
+            <span className="session-pill">Checking session...</span>
+          ) : user ? (
+            <>
+              <span className="session-pill">
+                {user.firstName} {user.lastName} · {user.role}
+              </span>
+              <button className="button button-ghost" onClick={handleLogout} type="button">
+                Log out
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink className="button button-ghost" to="/login">
+                Log in
+              </NavLink>
+              <NavLink className="button" to="/register">
+                Get started
+              </NavLink>
+            </>
+          )}
         </div>
       </header>
 

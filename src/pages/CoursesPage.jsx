@@ -1,17 +1,41 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SectionCard from "../components/layout/SectionCard.jsx";
-
-const courses = [
-  { id: "a1-foundations", title: "A1 Foundations", summary: "Introduce everyday vocabulary and simple sentence patterns." },
-  { id: "a2-confidence", title: "A2 Confidence", summary: "Build practical fluency for routines, travel, and conversations." },
-  { id: "b1-progress", title: "B1 Progress", summary: "Strengthen grammar control and reading comprehension." }
-];
+import { apiRequest, endpoints } from "../services/api.js";
 
 export default function CoursesPage() {
+  const [courses, setCourses] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadCourses() {
+      try {
+        const response = await apiRequest(endpoints.courses);
+
+        if (!isCancelled) {
+          setCourses(response?.items ?? []);
+        }
+      } catch (loadError) {
+        if (!isCancelled) {
+          setError(loadError.message);
+        }
+      }
+    }
+
+    loadCourses();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
   return (
     <div className="stack-lg">
       <SectionCard eyebrow="Catalog" title="Courses by level">
         <p>Levels are organized so learners can move from foundations into more confident conversation and comprehension.</p>
+        {error ? <p className="form-error">{error}</p> : null}
       </SectionCard>
 
       <div className="grid grid-3">
@@ -26,7 +50,7 @@ export default function CoursesPage() {
               </Link>
             }
           >
-            <p>{course.summary}</p>
+            <p>{course.summary ?? `Structured ${course.level} learning path with guided units and quizzes.`}</p>
           </SectionCard>
         ))}
       </div>

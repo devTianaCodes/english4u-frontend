@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import SectionCard from "../components/layout/SectionCard.jsx";
+import { useAuth } from "../features/auth/AuthProvider.jsx";
 
 const pillars = [
   {
@@ -17,6 +18,8 @@ const pillars = [
 ];
 
 export default function LandingPage() {
+  const { user } = useAuth();
+
   return (
     <div className="stack-xl">
       <section className="hero">
@@ -28,8 +31,8 @@ export default function LandingPage() {
             curriculum.
           </p>
           <div className="button-row">
-            <Link className="button" to="/register">
-              Start learning
+            <Link className="button" to={user ? "/dashboard" : "/register"}>
+              {user ? "Open dashboard" : "Start learning"}
             </Link>
             <Link className="button button-ghost" to="/admin">
               View admin area

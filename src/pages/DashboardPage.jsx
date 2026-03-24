@@ -1,23 +1,59 @@
+import { useEffect, useState } from "react";
 import SectionCard from "../components/layout/SectionCard.jsx";
 import ProgressRing from "../components/ui/ProgressRing.jsx";
-
-const continueCards = [
-  { title: "Continue unit", text: "Unit 3: Everyday habits and time expressions." },
-  { title: "Review vocabulary", text: "18 saved words are ready for reinforcement." },
-  { title: "Take quiz", text: "The unit checkpoint unlocks after your next lesson." }
-];
+import { useAuth } from "../features/auth/AuthProvider.jsx";
+import { apiRequest, endpoints } from "../services/api.js";
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const [dashboard, setDashboard] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadDashboard() {
+      try {
+        const response = await apiRequest(endpoints.dashboard);
+
+        if (!isCancelled) {
+          setDashboard(response);
+        }
+      } catch (loadError) {
+        if (!isCancelled) {
+          setError(loadError.message);
+        }
+      }
+    }
+
+    loadDashboard();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  const continueCards = [
+    { title: "Continue unit", text: `${dashboard?.currentCourse ?? "Your current course"} is ready for the next lesson.` },
+    { title: "Review vocabulary", text: "Use short review loops to reinforce the words you met in recent lessons." },
+    { title: "Take quiz", text: "Finish the current lesson to unlock the next checkpoint." }
+  ];
+
   return (
     <div className="stack-lg">
       <section className="dashboard-grid">
         <SectionCard eyebrow="Welcome back" title="Your learning dashboard">
-          <p>Keep the next action obvious: continue the current unit, finish the lesson, and watch progress move.</p>
+          <p>
+            {dashboard
+              ? `Welcome ${dashboard.learner.name}. Keep the next action obvious and continue your ${dashboard.currentLevel} path.`
+              : `Welcome ${user?.firstName ?? "back"}. Keep the next action obvious and continue your current learning path.`}
+          </p>
+          {error ? <p className="form-error">{error}</p> : null}
         </SectionCard>
         <SectionCard eyebrow="Progress" title="This week">
           <div className="ring-row">
-            <ProgressRing value={72} label="Unit progress" />
-            <ProgressRing value={86} label="Quiz average" />
+            <ProgressRing value={dashboard ? Math.min(dashboard.completedLessons * 5, 100) : 0} label="Course progress" />
+            <ProgressRing value={dashboard?.quizAverage ?? 0} label="Quiz average" />
           </div>
         </SectionCard>
       </section>

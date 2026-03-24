@@ -5,6 +5,8 @@ import AdminHomePage from "../pages/AdminHomePage.jsx";
 import CourseDetailPage from "../pages/CourseDetailPage.jsx";
 import CoursesPage from "../pages/CoursesPage.jsx";
 import DashboardPage from "../pages/DashboardPage.jsx";
+import GuestRoute from "../features/auth/GuestRoute.jsx";
+import ProtectedRoute from "../features/auth/ProtectedRoute.jsx";
 import LandingPage from "../pages/LandingPage.jsx";
 import LessonPage from "../pages/LessonPage.jsx";
 import LoginPage from "../pages/LoginPage.jsx";
@@ -19,39 +21,119 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     children: [
       { index: true, element: <LandingPage /> },
-      { path: "login", element: <LoginPage /> },
-      { path: "register", element: <RegisterPage /> },
-      { path: "onboarding", element: <OnboardingPage /> },
-      { path: "dashboard", element: <DashboardPage /> },
+      {
+        path: "login",
+        element: (
+          <GuestRoute>
+            <LoginPage />
+          </GuestRoute>
+        )
+      },
+      {
+        path: "register",
+        element: (
+          <GuestRoute>
+            <RegisterPage />
+          </GuestRoute>
+        )
+      },
+      {
+        path: "onboarding",
+        element: (
+          <ProtectedRoute>
+            <OnboardingPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        )
+      },
       { path: "courses", element: <CoursesPage /> },
       { path: "courses/:courseId", element: <CourseDetailPage /> },
-      { path: "lessons/:lessonId", element: <LessonPage /> },
-      { path: "quizzes/:quizId", element: <QuizPage /> },
-      { path: "profile", element: <ProfilePage /> },
-      { path: "admin", element: <AdminHomePage /> },
+      {
+        path: "lessons/:lessonId",
+        element: (
+          <ProtectedRoute>
+            <LessonPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "quizzes/:quizId",
+        element: (
+          <ProtectedRoute>
+            <QuizPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "admin",
+        element: (
+          <ProtectedRoute roles={["admin"]}>
+            <AdminHomePage />
+          </ProtectedRoute>
+        )
+      },
       {
         path: "admin/courses",
-        element: <AdminCollectionPage title="Courses" description="Manage public learning paths and publishing state." />
+        element: (
+          <ProtectedRoute roles={["admin"]}>
+            <AdminCollectionPage title="Courses" description="Manage public learning paths and publishing state." />
+          </ProtectedRoute>
+        )
       },
       {
         path: "admin/levels",
-        element: <AdminCollectionPage title="Levels" description="Organize CEFR-style progression and prerequisites." />
+        element: (
+          <ProtectedRoute roles={["admin"]}>
+            <AdminCollectionPage title="Levels" description="Organize CEFR-style progression and prerequisites." />
+          </ProtectedRoute>
+        )
       },
       {
         path: "admin/units",
-        element: <AdminCollectionPage title="Units" description="Group lessons into teachable, trackable milestones." />
+        element: (
+          <ProtectedRoute roles={["admin"]}>
+            <AdminCollectionPage title="Units" description="Group lessons into teachable, trackable milestones." />
+          </ProtectedRoute>
+        )
       },
       {
         path: "admin/lessons",
-        element: <AdminCollectionPage title="Lessons" description="Author reading, grammar, vocabulary, and practice loops." />
+        element: (
+          <ProtectedRoute roles={["admin"]}>
+            <AdminCollectionPage title="Lessons" description="Author reading, grammar, vocabulary, and practice loops." />
+          </ProtectedRoute>
+        )
       },
       {
         path: "admin/quizzes",
-        element: <AdminCollectionPage title="Quizzes" description="Define assessment rules, questions, and answer options." />
+        element: (
+          <ProtectedRoute roles={["admin"]}>
+            <AdminCollectionPage title="Quizzes" description="Define assessment rules, questions, and answer options." />
+          </ProtectedRoute>
+        )
       },
       {
         path: "admin/users",
-        element: <AdminCollectionPage title="Users" description="Review learner progress, access, and completion trends." />
+        element: (
+          <ProtectedRoute roles={["admin"]}>
+            <AdminCollectionPage title="Users" description="Review learner progress, access, and completion trends." />
+          </ProtectedRoute>
+        )
       }
     ]
   }
