@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import SectionCard from "../components/layout/SectionCard.jsx";
 import ProgressRing from "../components/ui/ProgressRing.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
+import { useStudyPreferences } from "../features/progress/useStudyPreferences.js";
 import { apiRequest, endpoints } from "../services/api.js";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { preferences } = useStudyPreferences();
   const [dashboard, setDashboard] = useState(null);
   const [error, setError] = useState("");
 
@@ -68,6 +70,40 @@ export default function DashboardPage() {
             <ProgressRing value={dashboard ? Math.min(dashboard.completedLessons * 5, 100) : 0} label="Course progress" />
             <ProgressRing value={dashboard?.quizAverage ?? 0} label="Quiz average" />
           </div>
+        </SectionCard>
+      </section>
+
+      <section className="grid grid-2">
+        <SectionCard
+          eyebrow="Study rhythm"
+          title="Your weekly plan"
+          footer={
+            <Link className="button button-ghost" to="/profile">
+              Edit plan
+            </Link>
+          }
+        >
+          <div className="stat-row">
+            <div className="stat-chip">
+              <strong>{preferences.sessionsPerWeek}</strong>
+              <span>sessions / week</span>
+            </div>
+            <div className="stat-chip">
+              <strong>{preferences.minutesPerSession}</strong>
+              <span>minutes / session</span>
+            </div>
+            <div className="stat-chip">
+              <strong>{preferences.sessionsPerWeek * preferences.minutesPerSession}</strong>
+              <span>minutes / week</span>
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard eyebrow="Focus area" title={preferences.focus}>
+          <p>
+            Keep your weekly target realistic and tie it to one clear learning focus. Small consistency beats long,
+            irregular sessions.
+          </p>
         </SectionCard>
       </section>
 
