@@ -125,6 +125,11 @@ export default function QuizPage() {
           <p>
             You answered {result.correctAnswers} out of {result.totalQuestions} questions correctly.
           </p>
+          {result.streak ? (
+            <p className="support-copy">
+              Current streak: {result.streak} · Running quiz average: {result.quizAverage}%
+            </p>
+          ) : null}
           <p className="support-copy">Submitted at {new Date(result.submittedAt).toLocaleString()}.</p>
         </SectionCard>
       ) : null}

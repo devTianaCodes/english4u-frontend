@@ -68,7 +68,17 @@ export default function LessonPage() {
         }
       >
         <p>{lesson?.summary ?? "Loading lesson content from the backend."}</p>
-        {completion ? <p className="success-copy">Lesson saved with status: {completion.status}.</p> : null}
+        {completion ? (
+          <div className="stack-sm">
+            <p className="success-copy">Lesson saved with status: {completion.status}.</p>
+            {completion.streak ? (
+              <p className="support-copy">
+                Current streak: {completion.streak} · Completed lessons: {completion.completedLessons}
+              </p>
+            ) : null}
+            {completion.message ? <p className="support-copy">{completion.message}</p> : null}
+          </div>
+        ) : null}
         {error ? <p className="form-error">{error}</p> : null}
       </SectionCard>
 

@@ -63,6 +63,11 @@ export default function DashboardPage() {
               ? `Welcome ${dashboard.learner.name}. Keep the next action obvious and continue your ${dashboard.currentLevel} path.`
               : `Welcome ${user?.firstName ?? "back"}. Keep the next action obvious and continue your current learning path.`}
           </p>
+          {dashboard ? (
+            <p className="support-copy">
+              Current streak: {dashboard.streak} days · Completed lessons: {dashboard.completedLessons}
+            </p>
+          ) : null}
           {error ? <p className="form-error">{error}</p> : null}
         </SectionCard>
         <SectionCard eyebrow="Progress" title="This week">

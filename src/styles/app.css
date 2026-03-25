@@ -94,6 +94,11 @@
   gap: 1.5rem;
 }
 
+.stack-sm {
+  display: grid;
+  gap: 0.4rem;
+}
+
 .stack-xl {
   gap: 2rem;
 }
