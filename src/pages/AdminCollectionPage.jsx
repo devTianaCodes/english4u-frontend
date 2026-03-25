@@ -27,6 +27,24 @@ const emptyLessonForm = {
   focus: "Core practice"
 };
 
+function createEmptyQuizQuestions() {
+  return Array.from({ length: 3 }, () => ({
+    prompt: "",
+    correct: "",
+    distractorOne: "",
+    distractorTwo: ""
+  }));
+}
+
+function createEmptyQuizForm() {
+  return {
+    lessonId: "",
+    title: "",
+    description: "",
+    questions: createEmptyQuizQuestions()
+  };
+}
+
 function summarizeItem(collectionKey, item) {
   if (collectionKey === "courses") {
     return `${item.level} · ${item.unitCount} units · ${item.lessonCount} lessons`;
@@ -45,7 +63,9 @@ function summarizeItem(collectionKey, item) {
   }
 
   if (collectionKey === "quizzes") {
-    return `${item.courseTitle} · ${item.unitTitle}`;
+    return `${item.courseTitle} · ${item.unitTitle} · ${item.questionCount} questions · ${
+      item.hasCustomContent ? "Custom content" : "Default content"
+    }`;
   }
 
   if (collectionKey === "users") {
@@ -63,22 +83,65 @@ function getDefaultUnitId(courseId, unitOptions) {
   return unitOptions.find((unit) => unit.courseId === courseId)?.id ?? unitOptions[0]?.id ?? "";
 }
 
+function buildQuizFormFromItem(item) {
+  const rawQuestions = Array.isArray(item?.questions) ? item.questions : [];
+  const questions = Array.from({ length: 3 }, (_, index) => {
+    const question = rawQuestions[index];
+    const options = question?.options ?? [];
+    const correctOption = options.find((option) => option.isCorrect);
+    const distractors = options.filter((option) => !option.isCorrect);
+
+    return {
+      prompt: question?.prompt ?? "",
+      correct: correctOption?.text ?? "",
+      distractorOne: distractors[0]?.text ?? "",
+      distractorTwo: distractors[1]?.text ?? ""
+    };
+  });
+
+  return {
+    lessonId: item?.lessonId ?? "",
+    title: item?.title ?? "",
+    description: item?.description ?? "",
+    questions
+  };
+}
+
+function buildQuizPayload(form) {
+  return {
+    lessonId: form.lessonId,
+    title: form.title,
+    description: form.description,
+    questions: form.questions.map((question) => ({
+      prompt: question.prompt,
+      options: [
+        { text: question.correct, isCorrect: true },
+        { text: question.distractorOne, isCorrect: false },
+        { text: question.distractorTwo, isCorrect: false }
+      ]
+    }))
+  };
+}
+
 export default function AdminCollectionPage({ collectionKey, title, description }) {
   const [items, setItems] = useState([]);
   const [courseOptions, setCourseOptions] = useState([]);
   const [unitOptions, setUnitOptions] = useState([]);
+  const [lessonOptions, setLessonOptions] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [courseForm, setCourseForm] = useState(emptyCourseForm);
   const [unitForm, setUnitForm] = useState(emptyUnitForm);
   const [lessonForm, setLessonForm] = useState(emptyLessonForm);
+  const [quizForm, setQuizForm] = useState(createEmptyQuizForm());
   const [editingId, setEditingId] = useState(null);
   const [saveMessage, setSaveMessage] = useState("");
 
   const supportsCourseCrud = collectionKey === "courses";
   const supportsUnitCrud = collectionKey === "units";
   const supportsLessonCrud = collectionKey === "lessons";
-  const supportsCrud = supportsCourseCrud || supportsUnitCrud || supportsLessonCrud;
+  const supportsQuizCrud = collectionKey === "quizzes";
+  const supportsCrud = supportsCourseCrud || supportsUnitCrud || supportsLessonCrud || supportsQuizCrud;
 
   const filteredUnitOptions = useMemo(() => {
     if (!supportsLessonCrud) {
@@ -105,38 +168,57 @@ export default function AdminCollectionPage({ collectionKey, title, description 
           requests.push(apiRequest("/admin/units"));
         }
 
-        const [response, coursesResponse, unitsResponse] = await Promise.all(requests);
-
-        if (!isCancelled) {
-          const nextCourseOptions = coursesResponse?.items ?? [];
-          const nextUnitOptions = unitsResponse?.items ?? [];
-
-          setItems(response.items ?? []);
-          setCourseOptions(nextCourseOptions);
-          setUnitOptions(nextUnitOptions);
-
-          if (supportsUnitCrud) {
-            setUnitForm((current) => ({
-              ...current,
-              courseId: current.courseId || getDefaultCourseId(nextCourseOptions)
-            }));
-          }
-
-          if (supportsLessonCrud) {
-            const nextCourseId = lessonForm.courseId || getDefaultCourseId(nextCourseOptions, nextUnitOptions);
-            const nextUnitId =
-              nextUnitOptions.find((unit) => unit.id === lessonForm.unitId && unit.courseId === nextCourseId)?.id ||
-              getDefaultUnitId(nextCourseId, nextUnitOptions);
-
-            setLessonForm((current) => ({
-              ...current,
-              courseId: current.courseId || nextCourseId,
-              unitId: current.unitId || nextUnitId
-            }));
-          }
-
-          setError("");
+        if (supportsQuizCrud) {
+          requests.push(apiRequest("/admin/lessons"));
         }
+
+        const [response, coursesResponse, unitsResponse, lessonsResponse] = await Promise.all(requests);
+
+        if (isCancelled) {
+          return;
+        }
+
+        const nextItems = response.items ?? [];
+        const nextCourseOptions = coursesResponse?.items ?? [];
+        const nextUnitOptions = unitsResponse?.items ?? [];
+        const nextLessonOptions = lessonsResponse?.items ?? [];
+
+        setItems(nextItems);
+        setCourseOptions(nextCourseOptions);
+        setUnitOptions(nextUnitOptions);
+        setLessonOptions(nextLessonOptions);
+
+        if (supportsUnitCrud) {
+          setUnitForm((current) => ({
+            ...current,
+            courseId: current.courseId || getDefaultCourseId(nextCourseOptions)
+          }));
+        }
+
+        if (supportsLessonCrud) {
+          const defaultCourseId = lessonForm.courseId || getDefaultCourseId(nextCourseOptions, nextUnitOptions);
+          const defaultUnitId = lessonForm.unitId || getDefaultUnitId(defaultCourseId, nextUnitOptions);
+
+          setLessonForm((current) => ({
+            ...current,
+            courseId: current.courseId || defaultCourseId,
+            unitId: current.unitId || defaultUnitId
+          }));
+        }
+
+        if (supportsQuizCrud) {
+          const defaultQuizItem = nextItems.find((item) => item.lessonId === quizForm.lessonId) ?? nextItems[0] ?? null;
+
+          if (defaultQuizItem) {
+            setQuizForm(buildQuizFormFromItem(defaultQuizItem));
+            setEditingId(defaultQuizItem.id);
+          } else {
+            setQuizForm(createEmptyQuizForm());
+            setEditingId(null);
+          }
+        }
+
+        setError("");
       } catch (loadError) {
         if (!isCancelled) {
           setError(loadError.message);
@@ -153,13 +235,19 @@ export default function AdminCollectionPage({ collectionKey, title, description 
     return () => {
       isCancelled = true;
     };
-  }, [collectionKey, lessonForm.courseId, lessonForm.unitId, supportsLessonCrud, supportsUnitCrud]);
+  }, [collectionKey, supportsLessonCrud, supportsQuizCrud, supportsUnitCrud]);
 
-  function resetForms(nextCourseOptions = courseOptions, nextUnitOptions = unitOptions) {
+  function resetForms(
+    nextCourseOptions = courseOptions,
+    nextUnitOptions = unitOptions,
+    nextLessonOptions = lessonOptions,
+    nextItems = items
+  ) {
     const defaultCourseId = getDefaultCourseId(nextCourseOptions, nextUnitOptions);
     const defaultUnitId = getDefaultUnitId(defaultCourseId, nextUnitOptions);
+    const defaultQuizItem = nextItems[0] ?? null;
 
-    setEditingId(null);
+    setEditingId(defaultQuizItem?.id ?? null);
     setCourseForm(emptyCourseForm);
     setUnitForm({
       ...emptyUnitForm,
@@ -170,6 +258,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       courseId: defaultCourseId,
       unitId: defaultUnitId
     });
+    setQuizForm(defaultQuizItem ? buildQuizFormFromItem(defaultQuizItem) : createEmptyQuizForm());
   }
 
   function handleCourseChange(event) {
@@ -214,6 +303,49 @@ export default function AdminCollectionPage({ collectionKey, title, description 
     setSaveMessage("");
   }
 
+  function handleQuizChange(event) {
+    const { name, value } = event.target;
+
+    if (name === "lessonId") {
+      const nextItem = items.find((item) => item.lessonId === value);
+
+      if (nextItem) {
+        setQuizForm(buildQuizFormFromItem(nextItem));
+        setEditingId(nextItem.id);
+      } else {
+        setQuizForm((current) => ({
+          ...current,
+          lessonId: value
+        }));
+        setEditingId(value ? `${value}-quiz` : null);
+      }
+
+      setSaveMessage("");
+      return;
+    }
+
+    setQuizForm((current) => ({
+      ...current,
+      [name]: value
+    }));
+    setSaveMessage("");
+  }
+
+  function handleQuizQuestionChange(index, field, value) {
+    setQuizForm((current) => ({
+      ...current,
+      questions: current.questions.map((question, questionIndex) =>
+        questionIndex === index
+          ? {
+              ...question,
+              [field]: value
+            }
+          : question
+      )
+    }));
+    setSaveMessage("");
+  }
+
   function startEdit(item) {
     if (supportsCourseCrud) {
       setEditingId(item.id);
@@ -249,6 +381,11 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       });
     }
 
+    if (supportsQuizCrud) {
+      setEditingId(item.id);
+      setQuizForm(buildQuizFormFromItem(item));
+    }
+
     setSaveMessage("");
   }
 
@@ -267,28 +404,15 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       );
 
       const nextItem = response.item;
+      const nextItems = editingId ? items.map((item) => (item.id === editingId ? nextItem : item)) : [nextItem, ...items];
+      const nextCourseOptions = editingId
+        ? courseOptions.map((item) => (item.id === editingId ? nextItem : item))
+        : [nextItem, ...courseOptions];
 
-      setItems((current) => {
-        if (editingId) {
-          return current.map((item) => (item.id === editingId ? nextItem : item));
-        }
-
-        return [nextItem, ...current];
-      });
-
-      setCourseOptions((current) => {
-        if (editingId) {
-          return current.map((item) => (item.id === editingId ? nextItem : item));
-        }
-
-        return [nextItem, ...current];
-      });
-
+      setItems(nextItems);
+      setCourseOptions(nextCourseOptions);
       setSaveMessage(editingId ? "Course updated." : "Course created.");
-      resetForms(
-        editingId ? courseOptions.map((item) => (item.id === editingId ? nextItem : item)) : [nextItem, ...courseOptions],
-        unitOptions
-      );
+      resetForms(nextCourseOptions, unitOptions, lessonOptions, nextItems);
     } catch (submitError) {
       setError(submitError.message);
     }
@@ -309,9 +433,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       );
 
       const nextItem = response.item;
-      const nextItems = editingId
-        ? items.map((item) => (item.id === editingId ? nextItem : item))
-        : [nextItem, ...items];
+      const nextItems = editingId ? items.map((item) => (item.id === editingId ? nextItem : item)) : [nextItem, ...items];
       const nextUnitOptions = editingId
         ? unitOptions.map((item) => (item.id === editingId ? nextItem : item))
         : [nextItem, ...unitOptions];
@@ -319,7 +441,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       setItems(nextItems);
       setUnitOptions(nextUnitOptions);
       setSaveMessage(editingId ? "Unit updated." : "Unit created.");
-      resetForms(courseOptions, nextUnitOptions);
+      resetForms(courseOptions, nextUnitOptions, lessonOptions, nextItems);
     } catch (submitError) {
       setError(submitError.message);
     }
@@ -340,17 +462,44 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       );
 
       const nextItem = response.item;
+      const nextItems = editingId ? items.map((item) => (item.id === editingId ? nextItem : item)) : [nextItem, ...items];
+      const nextLessonOptions = editingId
+        ? lessonOptions.map((item) => (item.id === editingId ? nextItem : item))
+        : [nextItem, ...lessonOptions];
 
-      setItems((current) => {
-        if (editingId) {
-          return current.map((item) => (item.id === editingId ? nextItem : item));
-        }
+      setItems(nextItems);
+      setLessonOptions(nextLessonOptions);
+      setSaveMessage(editingId ? "Lesson updated." : "Lesson created.");
+      resetForms(courseOptions, unitOptions, nextLessonOptions, nextItems);
+    } catch (submitError) {
+      setError(submitError.message);
+    }
+  }
 
-        return [nextItem, ...current];
+  async function handleQuizSubmit(event) {
+    event.preventDefault();
+    setError("");
+    setSaveMessage("");
+
+    try {
+      const targetQuizId = editingId ?? (quizForm.lessonId ? `${quizForm.lessonId}-quiz` : null);
+
+      if (!targetQuizId) {
+        throw new Error("Select a lesson before saving the quiz");
+      }
+
+      const response = await apiRequest(`/admin/${collectionKey}/${targetQuizId}`, {
+        method: "PUT",
+        body: JSON.stringify(buildQuizPayload(quizForm))
       });
 
-      setSaveMessage(editingId ? "Lesson updated." : "Lesson created.");
-      resetForms();
+      const nextItem = response.item;
+      const nextItems = items.map((item) => (item.id === targetQuizId ? nextItem : item));
+
+      setItems(nextItems);
+      setEditingId(nextItem.id);
+      setQuizForm(buildQuizFormFromItem(nextItem));
+      setSaveMessage("Quiz updated.");
     } catch (submitError) {
       setError(submitError.message);
     }
@@ -361,24 +510,46 @@ export default function AdminCollectionPage({ collectionKey, title, description 
     setSaveMessage("");
 
     try {
-      await apiRequest(`/admin/${collectionKey}/${id}`, {
+      const response = await apiRequest(`/admin/${collectionKey}/${id}`, {
         method: "DELETE"
       });
 
-      setItems((current) => current.filter((item) => item.id !== id));
+      if (supportsQuizCrud && response?.item) {
+        const nextItem = response.item;
+        const nextItems = items.map((item) => (item.id === id ? nextItem : item));
+
+        setItems(nextItems);
+        setEditingId(nextItem.id);
+        setQuizForm(buildQuizFormFromItem(nextItem));
+        setSaveMessage("Quiz reset to default content.");
+        return;
+      }
+
+      const nextItems = items.filter((item) => item.id !== id);
+      setItems(nextItems);
 
       if (supportsUnitCrud) {
         const nextUnitOptions = unitOptions.filter((item) => item.id !== id);
         setUnitOptions(nextUnitOptions);
 
         if (editingId === id) {
-          resetForms(courseOptions, nextUnitOptions);
+          resetForms(courseOptions, nextUnitOptions, lessonOptions, nextItems);
+          return;
+        }
+      }
+
+      if (supportsLessonCrud) {
+        const nextLessonOptions = lessonOptions.filter((item) => item.id !== id);
+        setLessonOptions(nextLessonOptions);
+
+        if (editingId === id) {
+          resetForms(courseOptions, unitOptions, nextLessonOptions, nextItems);
           return;
         }
       }
 
       if (editingId === id) {
-        resetForms();
+        resetForms(courseOptions, unitOptions, lessonOptions, nextItems);
       }
     } catch (deleteError) {
       setError(deleteError.message);
@@ -555,6 +726,86 @@ export default function AdminCollectionPage({ collectionKey, title, description 
         </SectionCard>
       ) : null}
 
+      {supportsQuizCrud ? (
+        <SectionCard
+          eyebrow="Quiz studio"
+          title="Edit assessment content"
+          footer={
+            <>
+              <button className="button" disabled={!quizForm.lessonId} form="quiz-admin-form" type="submit">
+                Save quiz
+              </button>
+              {editingId ? (
+                <button className="button button-ghost" onClick={() => handleDelete(editingId)} type="button">
+                  Reset to default
+                </button>
+              ) : null}
+            </>
+          }
+        >
+          <form className="form-grid" id="quiz-admin-form" onSubmit={handleQuizSubmit}>
+            <label>
+              Lesson
+              <select name="lessonId" onChange={handleQuizChange} value={quizForm.lessonId}>
+                {lessonOptions.map((lesson) => (
+                  <option key={lesson.id} value={lesson.id}>
+                    {`${lesson.courseTitle} / ${lesson.unitTitle} / ${lesson.title}`}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Quiz title
+              <input name="title" onChange={handleQuizChange} type="text" value={quizForm.title} />
+            </label>
+            <label>
+              Description
+              <input name="description" onChange={handleQuizChange} type="text" value={quizForm.description} />
+            </label>
+
+            {quizForm.questions.map((question, index) => (
+              <div key={`quiz-question-${index}`} className="section-card section-card-default">
+                <p className="eyebrow">{`Question ${String(index + 1).padStart(2, "0")}`}</p>
+                <div className="form-grid">
+                  <label>
+                    Prompt
+                    <input
+                      onChange={(event) => handleQuizQuestionChange(index, "prompt", event.target.value)}
+                      type="text"
+                      value={question.prompt}
+                    />
+                  </label>
+                  <label>
+                    Correct answer
+                    <input
+                      onChange={(event) => handleQuizQuestionChange(index, "correct", event.target.value)}
+                      type="text"
+                      value={question.correct}
+                    />
+                  </label>
+                  <label>
+                    Distractor 1
+                    <input
+                      onChange={(event) => handleQuizQuestionChange(index, "distractorOne", event.target.value)}
+                      type="text"
+                      value={question.distractorOne}
+                    />
+                  </label>
+                  <label>
+                    Distractor 2
+                    <input
+                      onChange={(event) => handleQuizQuestionChange(index, "distractorTwo", event.target.value)}
+                      type="text"
+                      value={question.distractorTwo}
+                    />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </form>
+        </SectionCard>
+      ) : null}
+
       <SectionCard eyebrow="Collection" title={`${title} overview`}>
         {isLoading ? <p>Loading collection...</p> : null}
         {!isLoading && items.length === 0 ? <p>No items yet.</p> : null}
@@ -566,6 +817,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
                 <h3>{item.title ?? item.name}</h3>
                 <p className="support-copy">{summarizeItem(collectionKey, item)}</p>
                 {item.summary ? <p className="support-copy">{item.summary}</p> : null}
+                {item.description ? <p className="support-copy">{item.description}</p> : null}
               </div>
               {supportsCrud ? (
                 <div className="admin-actions">
@@ -573,7 +825,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
                     Edit
                   </button>
                   <button className="button button-ghost" onClick={() => handleDelete(item.id)} type="button">
-                    Delete
+                    {supportsQuizCrud ? "Reset" : "Delete"}
                   </button>
                 </div>
               ) : null}

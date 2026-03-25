@@ -23,6 +23,11 @@ const adminAreas = [
     to: "/admin/lessons"
   },
   {
+    title: "Quiz studio",
+    text: "Edit quiz titles, descriptions, and answer sets for each lesson checkpoint.",
+    to: "/admin/quizzes"
+  },
+  {
     title: "Learner snapshot",
     text: "Check which sample users and learner states are currently exposed in the demo store.",
     to: "/admin/users"
