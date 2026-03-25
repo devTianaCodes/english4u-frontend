@@ -339,6 +339,10 @@
   gap: 0.85rem;
 }
 
+.stat-row-compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .stat-chip {
   display: grid;
   gap: 0.2rem;
@@ -356,6 +360,32 @@
 .stat-chip span {
   color: var(--color-text-muted);
   font-size: 0.9rem;
+}
+
+.course-hero {
+  display: grid;
+  gap: 1rem;
+}
+
+.lesson-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lesson-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.lesson-row h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
 }
 
 .progress-ring {
@@ -400,7 +430,9 @@
   .grid-3,
   .dashboard-grid,
   .form-grid-double,
-  .stat-row {
+  .stat-row,
+  .stat-row-compact,
+  .lesson-row {
     grid-template-columns: 1fr;
   }
 

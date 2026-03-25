@@ -34,28 +34,73 @@ export default function CourseDetailPage() {
 
   return (
     <div className="stack-lg">
-      <SectionCard eyebrow="Course detail" title={course?.title ?? courseId}>
-        <p>
-          {course
-            ? `${course.level} track with ${course.units.length} units currently scaffolded on the backend.`
-            : "Loading course metadata from the backend."}
-        </p>
+      <SectionCard
+        eyebrow="Course detail"
+        title={course?.title ?? courseId}
+        footer={
+          course ? (
+            <Link className="button" to={`/lessons/${course.units[0]?.lessons[0]?.id ?? ""}`}>
+              Start first lesson
+            </Link>
+          ) : null
+        }
+      >
+        <div className="course-hero">
+          <div className="stack-lg">
+            <p>
+              {course
+                ? `${course.level} track with ${course.unitCount} units and ${course.lessonCount} lessons. ${course.summary}`
+                : "Loading course metadata from the backend."}
+            </p>
+            {course ? (
+              <div className="stat-row stat-row-compact">
+                <div className="stat-chip">
+                  <strong>{course.unitCount}</strong>
+                  <span>units</span>
+                </div>
+                <div className="stat-chip">
+                  <strong>{course.lessonCount}</strong>
+                  <span>lessons</span>
+                </div>
+                <div className="stat-chip">
+                  <strong>{course.estimatedWeeks}</strong>
+                  <span>weeks</span>
+                </div>
+              </div>
+            ) : null}
+            {course ? <p className="support-copy">{course.intensity}</p> : null}
+          </div>
+        </div>
         {error ? <p className="form-error">{error}</p> : null}
       </SectionCard>
 
-      <div className="grid grid-2">
+      <div className="stack-lg">
         {(course?.units ?? []).map((unit, index) => (
           <SectionCard
             key={unit.id}
-            eyebrow={`Unit 0${index + 1}`}
+            eyebrow={unit.positionLabel ?? `Unit 0${index + 1}`}
             title={unit.title}
-            footer={
-              <Link className="button button-ghost" to={`/lessons/${unit.id}-lesson-${index + 1}`}>
-                Open lesson
-              </Link>
-            }
           >
-            <p>Short lessons, review loops, and a checkpoint quiz at the end of the unit.</p>
+            <p>{unit.summary}</p>
+            <p className="support-copy">
+              {unit.lessonCount} lessons · {unit.checkpointLabel}
+            </p>
+            <div className="lesson-list">
+              {unit.lessons.map((lesson, lessonIndex) => (
+                <div key={lesson.id} className="lesson-row">
+                  <div>
+                    <p className="eyebrow">Lesson {String(lessonIndex + 1).padStart(2, "0")}</p>
+                    <h3>{lesson.title}</h3>
+                    <p className="support-copy">
+                      {lesson.duration} · {lesson.focus}
+                    </p>
+                  </div>
+                  <Link className="button button-ghost" to={`/lessons/${lesson.id}`}>
+                    Open lesson
+                  </Link>
+                </div>
+              ))}
+            </div>
           </SectionCard>
         ))}
       </div>

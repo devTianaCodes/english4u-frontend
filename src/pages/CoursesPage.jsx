@@ -51,6 +51,19 @@ export default function CoursesPage() {
             }
           >
             <p>{course.summary ?? `Structured ${course.level} learning path with guided units and quizzes.`}</p>
+            <div className="stat-row stat-row-compact">
+              <div className="stat-chip">
+                <strong>{course.unitCount ?? 0}</strong>
+                <span>units</span>
+              </div>
+              <div className="stat-chip">
+                <strong>{course.lessonCount ?? 0}</strong>
+                <span>lessons</span>
+              </div>
+            </div>
+            <p className="support-copy">
+              {course.intensity ?? "Guided path"} · {course.estimatedWeeks ?? 4} week track
+            </p>
           </SectionCard>
         ))}
       </div>
