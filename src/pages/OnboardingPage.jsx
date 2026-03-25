@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SectionCard from "../components/layout/SectionCard.jsx";
 import { apiRequest } from "../services/api.js";
@@ -44,12 +44,37 @@ const placementQuestions = [
 
 export default function OnboardingPage() {
   const [answers, setAnswers] = useState({});
+  const [existingRecommendation, setExistingRecommendation] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const answeredCount = Object.keys(answers).length;
   const isComplete = answeredCount === placementQuestions.length;
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadExistingRecommendation() {
+      try {
+        const response = await apiRequest("/onboarding/recommendation");
+
+        if (!isCancelled) {
+          setExistingRecommendation(response);
+        }
+      } catch {
+        if (!isCancelled) {
+          setExistingRecommendation(null);
+        }
+      }
+    }
+
+    loadExistingRecommendation();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   function handleAnswerChange(questionId, value) {
     setAnswers((current) => ({
@@ -99,6 +124,12 @@ export default function OnboardingPage() {
           The first release uses a compact placement test to recommend the right learning path before the learner sees
           the dashboard.
         </p>
+        {existingRecommendation?.hasCompletedPlacement ? (
+          <p className="support-copy">
+            Latest saved recommendation: {existingRecommendation.recommendedLevel}
+            {existingRecommendation.score !== null ? ` · score ${existingRecommendation.score}` : ""}
+          </p>
+        ) : null}
         <p className="support-copy">{answeredCount} of {placementQuestions.length} questions answered.</p>
         {error ? <p className="form-error">{error}</p> : null}
       </SectionCard>

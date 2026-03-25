@@ -67,7 +67,15 @@ export default function ProfilePage() {
         {error ? <p className="form-error">{error}</p> : null}
       </SectionCard>
       <SectionCard eyebrow="Account" title="Progress summary">
-        <p>Target level: {profile?.targetLevel ?? "B1"}. Future work will add editable goals and daily study preferences.</p>
+        <p>Target level: {profile?.targetLevel ?? "B1"}.</p>
+        {profile?.placementScore !== null ? (
+          <p className="support-copy">
+            Latest placement score: {profile.placementScore}
+            {profile.placementTakenAt ? ` · ${new Date(profile.placementTakenAt).toLocaleDateString()}` : ""}
+          </p>
+        ) : (
+          <p className="support-copy">No placement result saved yet. Complete onboarding to personalize the path.</p>
+        )}
       </SectionCard>
       <SectionCard
         eyebrow="Study plan"
