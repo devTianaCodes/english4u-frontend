@@ -91,7 +91,11 @@ export const router = createBrowserRouter([
         path: "admin/courses",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage title="Courses" description="Manage public learning paths and publishing state." />
+            <AdminCollectionPage
+              collectionKey="courses"
+              title="Courses"
+              description="Manage public learning paths and publishing state."
+            />
           </ProtectedRoute>
         )
       },
@@ -99,7 +103,11 @@ export const router = createBrowserRouter([
         path: "admin/levels",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage title="Levels" description="Organize CEFR-style progression and prerequisites." />
+            <AdminCollectionPage
+              collectionKey="levels"
+              title="Levels"
+              description="Organize CEFR-style progression and prerequisites."
+            />
           </ProtectedRoute>
         )
       },
@@ -107,7 +115,11 @@ export const router = createBrowserRouter([
         path: "admin/units",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage title="Units" description="Group lessons into teachable, trackable milestones." />
+            <AdminCollectionPage
+              collectionKey="units"
+              title="Units"
+              description="Group lessons into teachable, trackable milestones."
+            />
           </ProtectedRoute>
         )
       },
@@ -115,7 +127,11 @@ export const router = createBrowserRouter([
         path: "admin/lessons",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage title="Lessons" description="Author reading, grammar, vocabulary, and practice loops." />
+            <AdminCollectionPage
+              collectionKey="lessons"
+              title="Lessons"
+              description="Author reading, grammar, vocabulary, and practice loops."
+            />
           </ProtectedRoute>
         )
       },
@@ -123,7 +139,11 @@ export const router = createBrowserRouter([
         path: "admin/quizzes",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage title="Quizzes" description="Define assessment rules, questions, and answer options." />
+            <AdminCollectionPage
+              collectionKey="quizzes"
+              title="Quizzes"
+              description="Define assessment rules, questions, and answer options."
+            />
           </ProtectedRoute>
         )
       },
@@ -131,7 +151,11 @@ export const router = createBrowserRouter([
         path: "admin/users",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage title="Users" description="Review learner progress, access, and completion trends." />
+            <AdminCollectionPage
+              collectionKey="users"
+              title="Users"
+              description="Review learner progress, access, and completion trends."
+            />
           </ProtectedRoute>
         )
       }

@@ -275,6 +275,12 @@
   background: rgba(255, 255, 255, 0.88);
 }
 
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 .form-error {
   color: #b42318;
   font-weight: 600;
@@ -388,6 +394,32 @@
   letter-spacing: -0.02em;
 }
 
+.admin-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: start;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.admin-row h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
 .progress-ring {
   display: grid;
   place-items: center;
@@ -432,7 +464,8 @@
   .form-grid-double,
   .stat-row,
   .stat-row-compact,
-  .lesson-row {
+  .lesson-row,
+  .admin-row {
     grid-template-columns: 1fr;
   }
 
