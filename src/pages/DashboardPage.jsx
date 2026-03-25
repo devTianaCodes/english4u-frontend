@@ -39,8 +39,10 @@ export default function DashboardPage() {
   const continueCards = [
     {
       title: "Continue unit",
-      text: `${dashboard?.currentCourse ?? "Your current course"} is ready for the next lesson.`,
-      to: "/lessons/a2-confidence-unit-2-lesson-1"
+      text: dashboard?.nextLesson
+        ? `${dashboard.nextLesson.unitTitle} · ${dashboard.nextLesson.title}`
+        : `${dashboard?.currentCourse ?? "Your current course"} is ready for the next lesson.`,
+      to: dashboard?.nextLesson ? `/lessons/${dashboard.nextLesson.id}` : "/courses"
     },
     {
       title: "Review vocabulary",
@@ -49,8 +51,10 @@ export default function DashboardPage() {
     },
     {
       title: "Take quiz",
-      text: "Finish the current lesson to unlock the next checkpoint.",
-      to: "/quizzes/a2-confidence-unit-2-lesson-1-quiz"
+      text: dashboard?.nextLesson
+        ? `Checkpoint for ${dashboard.nextLesson.title} is ready when you finish the lesson.`
+        : "Finish the current lesson to unlock the next checkpoint.",
+      to: dashboard?.nextLesson ? `/quizzes/${dashboard.nextLesson.quizId}` : "/courses"
     }
   ];
 
@@ -65,7 +69,8 @@ export default function DashboardPage() {
           </p>
           {dashboard ? (
             <p className="support-copy">
-              Current streak: {dashboard.streak} days · Completed lessons: {dashboard.completedLessons}
+              Current streak: {dashboard.streak} days · Completed lessons: {dashboard.completedLessons} · Current course:{" "}
+              {dashboard.currentCourse}
             </p>
           ) : null}
           {error ? <p className="form-error">{error}</p> : null}

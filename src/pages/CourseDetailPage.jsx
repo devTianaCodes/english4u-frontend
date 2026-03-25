@@ -6,17 +6,22 @@ import { apiRequest } from "../services/api.js";
 export default function CourseDetailPage() {
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
+  const [progress, setProgress] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let isCancelled = false;
 
-    async function loadCourse() {
+    async function loadCourseAndProgress() {
       try {
-        const response = await apiRequest(`/courses/${courseId}`);
+        const [courseResponse, progressResponse] = await Promise.all([
+          apiRequest(`/courses/${courseId}`),
+          apiRequest("/dashboard/me")
+        ]);
 
         if (!isCancelled) {
-          setCourse(response);
+          setCourse(courseResponse);
+          setProgress(progressResponse);
         }
       } catch (loadError) {
         if (!isCancelled) {
@@ -25,12 +30,15 @@ export default function CourseDetailPage() {
       }
     }
 
-    loadCourse();
+    loadCourseAndProgress();
 
     return () => {
       isCancelled = true;
     };
   }, [courseId]);
+
+  const completedLessonSlugs = new Set(progress?.completedLessonSlugs ?? []);
+  const nextLessonId = progress?.nextLesson?.id ?? null;
 
   return (
     <div className="stack-lg">
@@ -89,14 +97,19 @@ export default function CourseDetailPage() {
               {unit.lessons.map((lesson, lessonIndex) => (
                 <div key={lesson.id} className="lesson-row">
                   <div>
-                    <p className="eyebrow">Lesson {String(lessonIndex + 1).padStart(2, "0")}</p>
+                    <p className="eyebrow">{lesson.positionLabel ?? `Lesson ${String(lessonIndex + 1).padStart(2, "0")}`}</p>
                     <h3>{lesson.title}</h3>
                     <p className="support-copy">
                       {lesson.duration} · {lesson.focus}
                     </p>
+                    {completedLessonSlugs.has(lesson.id) ? (
+                      <p className="success-copy">Completed</p>
+                    ) : lesson.id === nextLessonId ? (
+                      <p className="support-copy">Next up</p>
+                    ) : null}
                   </div>
                   <Link className="button button-ghost" to={`/lessons/${lesson.id}`}>
-                    Open lesson
+                    {completedLessonSlugs.has(lesson.id) ? "Review lesson" : "Open lesson"}
                   </Link>
                 </div>
               ))}
