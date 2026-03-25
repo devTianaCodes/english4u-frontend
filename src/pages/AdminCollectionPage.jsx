@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SectionCard from "../components/layout/SectionCard.jsx";
 import { apiRequest } from "../services/api.js";
 
@@ -18,6 +18,15 @@ const emptyUnitForm = {
   checkpointLabel: ""
 };
 
+const emptyLessonForm = {
+  courseId: "",
+  unitId: "",
+  title: "",
+  summary: "",
+  duration: "12 min",
+  focus: "Core practice"
+};
+
 function summarizeItem(collectionKey, item) {
   if (collectionKey === "courses") {
     return `${item.level} · ${item.unitCount} units · ${item.lessonCount} lessons`;
@@ -32,7 +41,7 @@ function summarizeItem(collectionKey, item) {
   }
 
   if (collectionKey === "lessons") {
-    return `${item.courseTitle} · ${item.unitTitle} · ${item.duration}`;
+    return `${item.courseTitle} · ${item.unitTitle} · ${item.duration} · ${item.focus}`;
   }
 
   if (collectionKey === "quizzes") {
@@ -46,19 +55,38 @@ function summarizeItem(collectionKey, item) {
   return "";
 }
 
+function getDefaultCourseId(courseOptions, unitOptions = []) {
+  return courseOptions[0]?.id ?? unitOptions[0]?.courseId ?? "";
+}
+
+function getDefaultUnitId(courseId, unitOptions) {
+  return unitOptions.find((unit) => unit.courseId === courseId)?.id ?? unitOptions[0]?.id ?? "";
+}
+
 export default function AdminCollectionPage({ collectionKey, title, description }) {
   const [items, setItems] = useState([]);
   const [courseOptions, setCourseOptions] = useState([]);
+  const [unitOptions, setUnitOptions] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [courseForm, setCourseForm] = useState(emptyCourseForm);
   const [unitForm, setUnitForm] = useState(emptyUnitForm);
+  const [lessonForm, setLessonForm] = useState(emptyLessonForm);
   const [editingId, setEditingId] = useState(null);
   const [saveMessage, setSaveMessage] = useState("");
 
   const supportsCourseCrud = collectionKey === "courses";
   const supportsUnitCrud = collectionKey === "units";
-  const supportsCrud = supportsCourseCrud || supportsUnitCrud;
+  const supportsLessonCrud = collectionKey === "lessons";
+  const supportsCrud = supportsCourseCrud || supportsUnitCrud || supportsLessonCrud;
+
+  const filteredUnitOptions = useMemo(() => {
+    if (!supportsLessonCrud) {
+      return [];
+    }
+
+    return unitOptions.filter((unit) => unit.courseId === lessonForm.courseId);
+  }, [lessonForm.courseId, supportsLessonCrud, unitOptions]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -69,22 +97,44 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       try {
         const requests = [apiRequest(`/admin/${collectionKey}`)];
 
-        if (supportsUnitCrud) {
+        if (supportsUnitCrud || supportsLessonCrud) {
           requests.push(apiRequest("/admin/courses"));
         }
 
-        const [response, coursesResponse] = await Promise.all(requests);
+        if (supportsLessonCrud) {
+          requests.push(apiRequest("/admin/units"));
+        }
+
+        const [response, coursesResponse, unitsResponse] = await Promise.all(requests);
 
         if (!isCancelled) {
+          const nextCourseOptions = coursesResponse?.items ?? [];
+          const nextUnitOptions = unitsResponse?.items ?? [];
+
           setItems(response.items ?? []);
+          setCourseOptions(nextCourseOptions);
+          setUnitOptions(nextUnitOptions);
+
           if (supportsUnitCrud) {
-            const nextCourseOptions = coursesResponse?.items ?? [];
-            setCourseOptions(nextCourseOptions);
             setUnitForm((current) => ({
               ...current,
-              courseId: current.courseId || nextCourseOptions[0]?.id || ""
+              courseId: current.courseId || getDefaultCourseId(nextCourseOptions)
             }));
           }
+
+          if (supportsLessonCrud) {
+            const nextCourseId = lessonForm.courseId || getDefaultCourseId(nextCourseOptions, nextUnitOptions);
+            const nextUnitId =
+              nextUnitOptions.find((unit) => unit.id === lessonForm.unitId && unit.courseId === nextCourseId)?.id ||
+              getDefaultUnitId(nextCourseId, nextUnitOptions);
+
+            setLessonForm((current) => ({
+              ...current,
+              courseId: current.courseId || nextCourseId,
+              unitId: current.unitId || nextUnitId
+            }));
+          }
+
           setError("");
         }
       } catch (loadError) {
@@ -103,7 +153,24 @@ export default function AdminCollectionPage({ collectionKey, title, description 
     return () => {
       isCancelled = true;
     };
-  }, [collectionKey, supportsUnitCrud]);
+  }, [collectionKey, lessonForm.courseId, lessonForm.unitId, supportsLessonCrud, supportsUnitCrud]);
+
+  function resetForms(nextCourseOptions = courseOptions, nextUnitOptions = unitOptions) {
+    const defaultCourseId = getDefaultCourseId(nextCourseOptions, nextUnitOptions);
+    const defaultUnitId = getDefaultUnitId(defaultCourseId, nextUnitOptions);
+
+    setEditingId(null);
+    setCourseForm(emptyCourseForm);
+    setUnitForm({
+      ...emptyUnitForm,
+      courseId: defaultCourseId
+    });
+    setLessonForm({
+      ...emptyLessonForm,
+      courseId: defaultCourseId,
+      unitId: defaultUnitId
+    });
+  }
 
   function handleCourseChange(event) {
     const { checked, name, type, value } = event.target;
@@ -119,6 +186,28 @@ export default function AdminCollectionPage({ collectionKey, title, description 
     const { name, value } = event.target;
 
     setUnitForm((current) => ({
+      ...current,
+      [name]: value
+    }));
+    setSaveMessage("");
+  }
+
+  function handleLessonChange(event) {
+    const { name, value } = event.target;
+
+    if (name === "courseId") {
+      const nextUnitId = getDefaultUnitId(value, unitOptions);
+
+      setLessonForm((current) => ({
+        ...current,
+        courseId: value,
+        unitId: nextUnitId
+      }));
+      setSaveMessage("");
+      return;
+    }
+
+    setLessonForm((current) => ({
       ...current,
       [name]: value
     }));
@@ -148,16 +237,19 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       });
     }
 
-    setSaveMessage("");
-  }
+    if (supportsLessonCrud) {
+      setEditingId(item.id);
+      setLessonForm({
+        courseId: item.courseId,
+        unitId: item.unitId,
+        title: item.title,
+        summary: item.summary ?? "",
+        duration: item.duration ?? "12 min",
+        focus: item.focus ?? "Core practice"
+      });
+    }
 
-  function resetCourseForm() {
-    setEditingId(null);
-    setCourseForm(emptyCourseForm);
-    setUnitForm({
-      ...emptyUnitForm,
-      courseId: courseOptions[0]?.id ?? ""
-    });
+    setSaveMessage("");
   }
 
   async function handleCourseSubmit(event) {
@@ -184,8 +276,19 @@ export default function AdminCollectionPage({ collectionKey, title, description 
         return [nextItem, ...current];
       });
 
+      setCourseOptions((current) => {
+        if (editingId) {
+          return current.map((item) => (item.id === editingId ? nextItem : item));
+        }
+
+        return [nextItem, ...current];
+      });
+
       setSaveMessage(editingId ? "Course updated." : "Course created.");
-      resetCourseForm();
+      resetForms(
+        editingId ? courseOptions.map((item) => (item.id === editingId ? nextItem : item)) : [nextItem, ...courseOptions],
+        unitOptions
+      );
     } catch (submitError) {
       setError(submitError.message);
     }
@@ -206,6 +309,37 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       );
 
       const nextItem = response.item;
+      const nextItems = editingId
+        ? items.map((item) => (item.id === editingId ? nextItem : item))
+        : [nextItem, ...items];
+      const nextUnitOptions = editingId
+        ? unitOptions.map((item) => (item.id === editingId ? nextItem : item))
+        : [nextItem, ...unitOptions];
+
+      setItems(nextItems);
+      setUnitOptions(nextUnitOptions);
+      setSaveMessage(editingId ? "Unit updated." : "Unit created.");
+      resetForms(courseOptions, nextUnitOptions);
+    } catch (submitError) {
+      setError(submitError.message);
+    }
+  }
+
+  async function handleLessonSubmit(event) {
+    event.preventDefault();
+    setError("");
+    setSaveMessage("");
+
+    try {
+      const response = await apiRequest(
+        editingId ? `/admin/${collectionKey}/${editingId}` : `/admin/${collectionKey}`,
+        {
+          method: editingId ? "PUT" : "POST",
+          body: JSON.stringify(lessonForm)
+        }
+      );
+
+      const nextItem = response.item;
 
       setItems((current) => {
         if (editingId) {
@@ -215,8 +349,8 @@ export default function AdminCollectionPage({ collectionKey, title, description 
         return [nextItem, ...current];
       });
 
-      setSaveMessage(editingId ? "Unit updated." : "Unit created.");
-      resetCourseForm();
+      setSaveMessage(editingId ? "Lesson updated." : "Lesson created.");
+      resetForms();
     } catch (submitError) {
       setError(submitError.message);
     }
@@ -233,8 +367,18 @@ export default function AdminCollectionPage({ collectionKey, title, description 
 
       setItems((current) => current.filter((item) => item.id !== id));
 
+      if (supportsUnitCrud) {
+        const nextUnitOptions = unitOptions.filter((item) => item.id !== id);
+        setUnitOptions(nextUnitOptions);
+
+        if (editingId === id) {
+          resetForms(courseOptions, nextUnitOptions);
+          return;
+        }
+      }
+
       if (editingId === id) {
-        resetCourseForm();
+        resetForms();
       }
     } catch (deleteError) {
       setError(deleteError.message);
@@ -259,7 +403,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
                 {editingId ? "Save changes" : "Create course"}
               </button>
               {editingId ? (
-                <button className="button button-ghost" onClick={resetCourseForm} type="button">
+                <button className="button button-ghost" onClick={() => resetForms()} type="button">
                   Cancel edit
                 </button>
               ) : null}
@@ -316,7 +460,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
                 {editingId ? "Save changes" : "Create unit"}
               </button>
               {editingId ? (
-                <button className="button button-ghost" onClick={resetCourseForm} type="button">
+                <button className="button button-ghost" onClick={() => resetForms()} type="button">
                   Cancel edit
                 </button>
               ) : null}
@@ -346,6 +490,67 @@ export default function AdminCollectionPage({ collectionKey, title, description 
               Checkpoint label
               <input name="checkpointLabel" onChange={handleUnitChange} type="text" value={unitForm.checkpointLabel} />
             </label>
+          </form>
+        </SectionCard>
+      ) : null}
+
+      {supportsLessonCrud ? (
+        <SectionCard
+          eyebrow={editingId ? "Edit lesson" : "Create lesson"}
+          title={editingId ? "Update lesson content" : "Add a new lesson"}
+          footer={
+            <>
+              <button className="button" disabled={filteredUnitOptions.length === 0} form="lesson-admin-form" type="submit">
+                {editingId ? "Save changes" : "Create lesson"}
+              </button>
+              {editingId ? (
+                <button className="button button-ghost" onClick={() => resetForms()} type="button">
+                  Cancel edit
+                </button>
+              ) : null}
+            </>
+          }
+        >
+          <form className="form-grid form-grid-double" id="lesson-admin-form" onSubmit={handleLessonSubmit}>
+            <label>
+              Parent course
+              <select name="courseId" onChange={handleLessonChange} value={lessonForm.courseId}>
+                {courseOptions.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Parent unit
+              <select name="unitId" onChange={handleLessonChange} value={lessonForm.unitId}>
+                {filteredUnitOptions.map((unit) => (
+                  <option key={unit.id} value={unit.id}>
+                    {unit.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="profile-field-span">
+              Lesson title
+              <input name="title" onChange={handleLessonChange} type="text" value={lessonForm.title} />
+            </label>
+            <label className="profile-field-span">
+              Summary
+              <input name="summary" onChange={handleLessonChange} type="text" value={lessonForm.summary} />
+            </label>
+            <label>
+              Duration
+              <input name="duration" onChange={handleLessonChange} type="text" value={lessonForm.duration} />
+            </label>
+            <label>
+              Focus area
+              <input name="focus" onChange={handleLessonChange} type="text" value={lessonForm.focus} />
+            </label>
+            {filteredUnitOptions.length === 0 ? (
+              <p className="form-error form-error-span">Create a unit first before adding lessons to this course.</p>
+            ) : null}
           </form>
         </SectionCard>
       ) : null}

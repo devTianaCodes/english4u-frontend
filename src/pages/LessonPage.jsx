@@ -58,6 +58,15 @@ export default function LessonPage() {
         title={lesson?.title ?? lessonId}
         footer={
           <>
+            {lesson?.previousLesson ? (
+              <Link className="button button-ghost" to={`/lessons/${lesson.previousLesson.id}`}>
+                Previous lesson
+              </Link>
+            ) : lesson?.courseId ? (
+              <Link className="button button-ghost" to={`/courses/${lesson.courseId}`}>
+                Back to course
+              </Link>
+            ) : null}
             <button className="button button-ghost" disabled={isSubmitting} onClick={handleCompleteLesson} type="button">
               {isSubmitting ? "Saving..." : completion ? "Completed" : "Mark lesson complete"}
             </button>
@@ -68,6 +77,18 @@ export default function LessonPage() {
         }
       >
         <p>{lesson?.summary ?? "Loading lesson content from the backend."}</p>
+        {lesson ? (
+          <div className="stat-row stat-row-compact">
+            <div className="stat-chip">
+              <strong>{lesson.positionLabel ?? "Lesson"}</strong>
+              <span>{lesson.unitTitle}</span>
+            </div>
+            <div className="stat-chip">
+              <strong>{lesson.totalLessons ?? 0}</strong>
+              <span>{lesson.courseTitle}</span>
+            </div>
+          </div>
+        ) : null}
         {completion ? (
           <div className="stack-sm">
             <p className="success-copy">Lesson saved with status: {completion.status}.</p>
@@ -81,6 +102,22 @@ export default function LessonPage() {
         ) : null}
         {error ? <p className="form-error">{error}</p> : null}
       </SectionCard>
+
+      {lesson?.nextLesson ? (
+        <SectionCard
+          eyebrow="Continue path"
+          title={lesson.nextLesson.title}
+          footer={
+            <Link className="button" to={`/lessons/${lesson.nextLesson.id}`}>
+              Open next lesson
+            </Link>
+          }
+        >
+          <p className="support-copy">
+            Keep moving through {lesson.courseTitle} with the next lesson in sequence.
+          </p>
+        </SectionCard>
+      ) : null}
 
       <div className="grid grid-2">
         {(lesson?.blocks ?? []).map((block) => (

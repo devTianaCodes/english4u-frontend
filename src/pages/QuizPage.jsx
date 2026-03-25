@@ -76,15 +76,27 @@ export default function QuizPage() {
         eyebrow="Quiz"
         title={quiz?.title ?? quizId}
         footer={
-          <button className="button" disabled={!isReadyToSubmit || isSubmitting} onClick={handleSubmit} type="button">
-            {isSubmitting ? "Submitting..." : "Submit answers"}
-          </button>
+          <>
+            {quiz?.lessonId ? (
+              <Link className="button button-ghost" to={`/lessons/${quiz.lessonId}`}>
+                Back to lesson
+              </Link>
+            ) : null}
+            <button className="button" disabled={!isReadyToSubmit || isSubmitting} onClick={handleSubmit} type="button">
+              {isSubmitting ? "Submitting..." : "Submit answers"}
+            </button>
+          </>
         }
       >
         <p>{quiz?.description ?? "Loading quiz content from the backend."}</p>
         <p className="support-copy">
           {answeredCount} of {quiz?.questions.length ?? 0} questions answered.
         </p>
+        {quiz?.courseTitle ? (
+          <p className="support-copy">
+            {quiz.courseTitle} · {quiz.unitTitle}
+          </p>
+        ) : null}
         {error ? <p className="form-error">{error}</p> : null}
       </SectionCard>
 
@@ -113,11 +125,17 @@ export default function QuizPage() {
           title={`Score: ${result.score}%`}
           footer={
             <>
-              <Link className="button" to="/dashboard">
-                Back to dashboard
-              </Link>
-              <Link className="button button-ghost" to="/courses">
-                Keep learning
+              {result.nextLesson ? (
+                <Link className="button" to={`/lessons/${result.nextLesson.id}`}>
+                  Next lesson
+                </Link>
+              ) : (
+                <Link className="button" to="/dashboard">
+                  Back to dashboard
+                </Link>
+              )}
+              <Link className="button button-ghost" to={result.courseId ? `/courses/${result.courseId}` : "/courses"}>
+                Return to course
               </Link>
             </>
           }
@@ -129,6 +147,9 @@ export default function QuizPage() {
             <p className="support-copy">
               Current streak: {result.streak} · Running quiz average: {result.quizAverage}%
             </p>
+          ) : null}
+          {result.nextLesson ? (
+            <p className="support-copy">Next up: {result.nextLesson.title}</p>
           ) : null}
           <p className="support-copy">Submitted at {new Date(result.submittedAt).toLocaleString()}.</p>
         </SectionCard>

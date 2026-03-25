@@ -18,6 +18,11 @@ const adminAreas = [
     to: "/admin/units"
   },
   {
+    title: "Lesson studio",
+    text: "Create and refine lesson titles, summaries, durations, and focus areas for each unit.",
+    to: "/admin/lessons"
+  },
+  {
     title: "Learner snapshot",
     text: "Check which sample users and learner states are currently exposed in the demo store.",
     to: "/admin/users"
