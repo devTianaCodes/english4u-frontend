@@ -11,6 +11,13 @@ const emptyCourseForm = {
   published: false
 };
 
+const emptyUnitForm = {
+  courseId: "",
+  title: "",
+  summary: "",
+  checkpointLabel: ""
+};
+
 function summarizeItem(collectionKey, item) {
   if (collectionKey === "courses") {
     return `${item.level} · ${item.unitCount} units · ${item.lessonCount} lessons`;
@@ -41,13 +48,17 @@ function summarizeItem(collectionKey, item) {
 
 export default function AdminCollectionPage({ collectionKey, title, description }) {
   const [items, setItems] = useState([]);
+  const [courseOptions, setCourseOptions] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [courseForm, setCourseForm] = useState(emptyCourseForm);
+  const [unitForm, setUnitForm] = useState(emptyUnitForm);
   const [editingId, setEditingId] = useState(null);
   const [saveMessage, setSaveMessage] = useState("");
 
   const supportsCourseCrud = collectionKey === "courses";
+  const supportsUnitCrud = collectionKey === "units";
+  const supportsCrud = supportsCourseCrud || supportsUnitCrud;
 
   useEffect(() => {
     let isCancelled = false;
@@ -56,10 +67,24 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       setIsLoading(true);
 
       try {
-        const response = await apiRequest(`/admin/${collectionKey}`);
+        const requests = [apiRequest(`/admin/${collectionKey}`)];
+
+        if (supportsUnitCrud) {
+          requests.push(apiRequest("/admin/courses"));
+        }
+
+        const [response, coursesResponse] = await Promise.all(requests);
 
         if (!isCancelled) {
           setItems(response.items ?? []);
+          if (supportsUnitCrud) {
+            const nextCourseOptions = coursesResponse?.items ?? [];
+            setCourseOptions(nextCourseOptions);
+            setUnitForm((current) => ({
+              ...current,
+              courseId: current.courseId || nextCourseOptions[0]?.id || ""
+            }));
+          }
           setError("");
         }
       } catch (loadError) {
@@ -78,7 +103,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
     return () => {
       isCancelled = true;
     };
-  }, [collectionKey]);
+  }, [collectionKey, supportsUnitCrud]);
 
   function handleCourseChange(event) {
     const { checked, name, type, value } = event.target;
@@ -90,22 +115,49 @@ export default function AdminCollectionPage({ collectionKey, title, description 
     setSaveMessage("");
   }
 
+  function handleUnitChange(event) {
+    const { name, value } = event.target;
+
+    setUnitForm((current) => ({
+      ...current,
+      [name]: value
+    }));
+    setSaveMessage("");
+  }
+
   function startEdit(item) {
-    setEditingId(item.id);
-    setCourseForm({
-      title: item.title,
-      level: item.level,
-      summary: item.summary ?? "",
-      intensity: item.intensity ?? "",
-      estimatedWeeks: item.estimatedWeeks ?? 4,
-      published: Boolean(item.published)
-    });
+    if (supportsCourseCrud) {
+      setEditingId(item.id);
+      setCourseForm({
+        title: item.title,
+        level: item.level,
+        summary: item.summary ?? "",
+        intensity: item.intensity ?? "",
+        estimatedWeeks: item.estimatedWeeks ?? 4,
+        published: Boolean(item.published)
+      });
+    }
+
+    if (supportsUnitCrud) {
+      setEditingId(item.id);
+      setUnitForm({
+        courseId: item.courseId,
+        title: item.title,
+        summary: item.summary ?? "",
+        checkpointLabel: item.checkpointLabel ?? ""
+      });
+    }
+
     setSaveMessage("");
   }
 
   function resetCourseForm() {
     setEditingId(null);
     setCourseForm(emptyCourseForm);
+    setUnitForm({
+      ...emptyUnitForm,
+      courseId: courseOptions[0]?.id ?? ""
+    });
   }
 
   async function handleCourseSubmit(event) {
@@ -133,6 +185,37 @@ export default function AdminCollectionPage({ collectionKey, title, description 
       });
 
       setSaveMessage(editingId ? "Course updated." : "Course created.");
+      resetCourseForm();
+    } catch (submitError) {
+      setError(submitError.message);
+    }
+  }
+
+  async function handleUnitSubmit(event) {
+    event.preventDefault();
+    setError("");
+    setSaveMessage("");
+
+    try {
+      const response = await apiRequest(
+        editingId ? `/admin/${collectionKey}/${editingId}` : `/admin/${collectionKey}`,
+        {
+          method: editingId ? "PUT" : "POST",
+          body: JSON.stringify(unitForm)
+        }
+      );
+
+      const nextItem = response.item;
+
+      setItems((current) => {
+        if (editingId) {
+          return current.map((item) => (item.id === editingId ? nextItem : item));
+        }
+
+        return [nextItem, ...current];
+      });
+
+      setSaveMessage(editingId ? "Unit updated." : "Unit created.");
       resetCourseForm();
     } catch (submitError) {
       setError(submitError.message);
@@ -223,6 +306,50 @@ export default function AdminCollectionPage({ collectionKey, title, description 
         </SectionCard>
       ) : null}
 
+      {supportsUnitCrud ? (
+        <SectionCard
+          eyebrow={editingId ? "Edit unit" : "Create unit"}
+          title={editingId ? "Update learning unit" : "Add a new unit"}
+          footer={
+            <>
+              <button className="button" form="unit-admin-form" type="submit">
+                {editingId ? "Save changes" : "Create unit"}
+              </button>
+              {editingId ? (
+                <button className="button button-ghost" onClick={resetCourseForm} type="button">
+                  Cancel edit
+                </button>
+              ) : null}
+            </>
+          }
+        >
+          <form className="form-grid form-grid-double" id="unit-admin-form" onSubmit={handleUnitSubmit}>
+            <label>
+              Parent course
+              <select name="courseId" onChange={handleUnitChange} value={unitForm.courseId}>
+                {courseOptions.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Unit title
+              <input name="title" onChange={handleUnitChange} type="text" value={unitForm.title} />
+            </label>
+            <label className="profile-field-span">
+              Summary
+              <input name="summary" onChange={handleUnitChange} type="text" value={unitForm.summary} />
+            </label>
+            <label className="profile-field-span">
+              Checkpoint label
+              <input name="checkpointLabel" onChange={handleUnitChange} type="text" value={unitForm.checkpointLabel} />
+            </label>
+          </form>
+        </SectionCard>
+      ) : null}
+
       <SectionCard eyebrow="Collection" title={`${title} overview`}>
         {isLoading ? <p>Loading collection...</p> : null}
         {!isLoading && items.length === 0 ? <p>No items yet.</p> : null}
@@ -235,7 +362,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
                 <p className="support-copy">{summarizeItem(collectionKey, item)}</p>
                 {item.summary ? <p className="support-copy">{item.summary}</p> : null}
               </div>
-              {supportsCourseCrud ? (
+              {supportsCrud ? (
                 <div className="admin-actions">
                   <button className="button button-ghost" onClick={() => startEdit(item)} type="button">
                     Edit
