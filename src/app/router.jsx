@@ -16,6 +16,7 @@ const LoginPage = lazy(() => import("../pages/LoginPage.jsx"));
 const OnboardingPage = lazy(() => import("../pages/OnboardingPage.jsx"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage.jsx"));
 const QuizPage = lazy(() => import("../pages/QuizPage.jsx"));
+const ReviewPage = lazy(() => import("../pages/ReviewPage.jsx"));
 const RegisterPage = lazy(() => import("../pages/RegisterPage.jsx"));
 
 function withSuspense(element) {
@@ -83,6 +84,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             {withSuspense(<ProfilePage />)}
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "review",
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<ReviewPage />)}
           </ProtectedRoute>
         )
       },

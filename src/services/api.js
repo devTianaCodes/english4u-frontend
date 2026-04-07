@@ -36,5 +36,6 @@ export const endpoints = {
   me: "/auth/me",
   profile: "/users/me",
   dashboard: "/dashboard/me",
-  courses: "/courses"
+  courses: "/courses",
+  review: "/review/me"
 };

@@ -1090,6 +1090,58 @@
   gap: 0.7rem;
 }
 
+.review-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 1.5rem;
+}
+
+.review-hero-copy,
+.review-hero-stats,
+.review-session,
+.review-category-grid {
+  min-width: 0;
+}
+
+.review-hero-copy,
+.review-hero-stats,
+.review-session {
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.review-hero-copy {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.review-hero-copy h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+
+.review-hero-copy p {
+  margin: 0;
+}
+
+.review-hero-stats,
+.review-category-grid,
+.review-question-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.review-category-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .skeleton-card {
   display: grid;
   gap: 0.9rem;
@@ -1557,6 +1609,7 @@
   .catalog-layout,
   .course-detail-layout,
   .auth-layout,
+  .review-hero,
   .grid-2,
   .grid-3,
   .dashboard-grid,
@@ -1637,7 +1690,8 @@
   .catalog-hero-stats,
   .dashboard-stats-grid,
   .achievement-grid,
-  .quiz-result-details {
+  .quiz-result-details,
+  .review-category-grid {
     grid-template-columns: 1fr;
   }
 }

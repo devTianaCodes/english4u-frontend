@@ -46,9 +46,12 @@ export default function DashboardPage() {
     },
     {
       title: "Review vocabulary",
-      text: "Use short review loops to reinforce the words you met in recent lessons.",
-      to: "/courses",
-      progress: 54
+      text:
+        dashboard?.reviewDueCount > 0
+          ? `${dashboard.reviewDueCount} review prompt${dashboard.reviewDueCount === 1 ? "" : "s"} are ready from recent work.`
+          : "Use short review loops to reinforce the words you met in recent lessons.",
+      to: "/review",
+      progress: dashboard?.reviewDueCount ? Math.min(dashboard.reviewDueCount * 20, 100) : 32
     },
     {
       title: "Take quiz",
@@ -161,6 +164,10 @@ export default function DashboardPage() {
             <div className="stat-chip">
               <strong>{preferences.sessionsPerWeek * preferences.minutesPerSession}</strong>
               <span>minutes / week</span>
+            </div>
+            <div className="stat-chip">
+              <strong>{dashboard?.reviewDueCount ?? 0}</strong>
+              <span>review due</span>
             </div>
           </div>
           <div className="section-card-footer">

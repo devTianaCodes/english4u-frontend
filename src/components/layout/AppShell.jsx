@@ -6,6 +6,7 @@ import Button from "../ui/Button.jsx";
 const learnerLinks = [
   { to: "/dashboard", label: "Dashboard" },
   { to: "/courses", label: "Courses" },
+  { to: "/review", label: "Review" },
   { to: "/onboarding", label: "Placement" },
   { to: "/profile", label: "Profile" }
 ];
