@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Button from "../components/ui/Button.jsx";
 import SectionCard from "../components/layout/SectionCard.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
 import { useStudyPreferences } from "../features/progress/useStudyPreferences.js";
@@ -100,14 +101,29 @@ export default function ProfilePage() {
         ) : (
           <p className="support-copy">No placement result saved yet. Complete onboarding to personalize the path.</p>
         )}
+        {profile?.placementHistory?.length ? (
+          <div className="stack-sm">
+            <p className="eyebrow">Recent attempts</p>
+            {profile.placementHistory.map((attempt, index) => (
+              <div key={attempt.id} className="dashboard-focus-strip">
+                <span>{index === 0 ? "Latest" : `Attempt ${index + 1}`}</span>
+                <strong>{attempt.recommendedLevel} · {attempt.score}</strong>
+                <p>{new Date(attempt.createdAt).toLocaleDateString()}</p>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </SectionCard>
       <SectionCard
         eyebrow="Study plan"
         title="Weekly learning preferences"
         footer={
-          <button className="button" disabled={isSaving} form="study-plan-form" type="submit">
-            {isSaving ? "Saving..." : "Save preferences"}
-          </button>
+          <div className="button-row">
+            <Button disabled={isSaving} form="study-plan-form" type="submit">
+              {isSaving ? "Saving..." : "Save preferences"}
+            </Button>
+            <Button to="/study-plan" variant="secondary">Open full study plan</Button>
+          </div>
         }
       >
         <form className="form-grid form-grid-double" id="study-plan-form" onSubmit={handleSave}>

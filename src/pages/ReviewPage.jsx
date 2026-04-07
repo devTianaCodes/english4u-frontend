@@ -1,23 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import Button from "../components/ui/Button.jsx";
 import { apiRequest, endpoints } from "../services/api.js";
 
 export default function ReviewPage() {
+  const { mode } = useParams();
   const [review, setReview] = useState(null);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const activeMode = useMemo(
+    () => (["mistakes", "warm-up", "grammar", "vocabulary"].includes(mode) ? mode : "all"),
+    [mode]
+  );
 
   useEffect(() => {
     let isCancelled = false;
 
     async function loadReview() {
       try {
-        const response = await apiRequest(endpoints.review);
+        const response = await apiRequest(`${endpoints.review}?mode=${encodeURIComponent(activeMode)}`);
 
         if (!isCancelled) {
           setReview(response);
+          setAnswers({});
+          setResult(null);
         }
       } catch (loadError) {
         if (!isCancelled) {
@@ -31,7 +39,7 @@ export default function ReviewPage() {
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [activeMode]);
 
   function handleAnswer(itemId, optionId) {
     setAnswers((current) => ({
@@ -48,6 +56,7 @@ export default function ReviewPage() {
       const response = await apiRequest("/review/session", {
         method: "POST",
         body: JSON.stringify({
+          mode: activeMode,
           answers: Object.entries(answers).map(([itemId, optionId]) => ({
             itemId,
             optionId
@@ -96,7 +105,15 @@ export default function ReviewPage() {
             <span>items due</span>
           </div>
           <div className="catalog-stat-card">
-            <strong>{review?.source === "recent-mistakes" ? "Mistakes" : "Warm-up"}</strong>
+            <strong>
+              {review?.source === "recent-mistakes"
+                ? "Mistakes"
+                : review?.source === "grammar-review"
+                  ? "Grammar"
+                  : review?.source === "vocabulary-review"
+                    ? "Words"
+                    : "Warm-up"}
+            </strong>
             <span>session type</span>
           </div>
           <div className="catalog-stat-card">
@@ -107,6 +124,22 @@ export default function ReviewPage() {
       </section>
 
       {error ? <p className="form-error">{error}</p> : null}
+
+      <section className="review-mode-grid">
+        {(review?.modes ?? []).map((entry) => (
+          <article key={entry.id} className={`section-card review-mode-card ${entry.isActive ? "review-mode-card-active" : ""}`}>
+            <p className="eyebrow">Review lane</p>
+            <h2>{entry.title}</h2>
+            <p>{entry.description}</p>
+            <div className="section-card-footer">
+              <span className="support-copy">{entry.count} item{entry.count === 1 ? "" : "s"} ready</span>
+              <Button to={entry.id === "all" ? "/review" : `/review/${entry.id}`} variant={entry.isActive ? "primary" : "secondary"}>
+                {entry.isActive ? "Open now" : "Switch"}
+              </Button>
+            </div>
+          </article>
+        ))}
+      </section>
 
       <section className="review-category-grid">
         {(review?.categories ?? []).map((category) => (
@@ -207,6 +240,7 @@ export default function ReviewPage() {
               <div className="stack-sm">
                 <strong>Review session complete</strong>
                 <p>{result.reviewDueCount} item{result.reviewDueCount === 1 ? "" : "s"} were available in this round.</p>
+                <p className="support-copy">Mode: {result.activeMode}</p>
                 <span className="metric-label">{new Date(result.submittedAt).toLocaleString()}</span>
               </div>
             </div>

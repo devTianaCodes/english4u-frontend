@@ -25,6 +25,7 @@ const emptyLessonForm = {
   summary: "",
   duration: "12 min",
   focus: "Core practice",
+  objectives: ["", "", ""],
   blocks: [
     { type: "reading", title: "", content: "", accent: "" },
     { type: "grammar", title: "", content: "", accent: "" },
@@ -65,7 +66,7 @@ function summarizeItem(collectionKey, item) {
   }
 
   if (collectionKey === "lessons") {
-    return `${item.courseTitle} · ${item.unitTitle} · ${item.duration} · ${item.focus} · ${item.blocks?.length ?? 0} blocks`;
+    return `${item.courseTitle} · ${item.unitTitle} · ${item.duration} · ${item.focus} · ${item.objectives?.length ?? 0} objectives · ${item.blocks?.length ?? 0} blocks`;
   }
 
   if (collectionKey === "quizzes") {
@@ -137,6 +138,7 @@ function buildLessonFormFromItem(item) {
     summary: item?.summary ?? "",
     duration: item?.duration ?? "12 min",
     focus: item?.focus ?? "Core practice",
+    objectives: Array.isArray(item?.objectives) && item.objectives.length > 0 ? item.objectives : emptyLessonForm.objectives,
     blocks: Array.isArray(item?.blocks) && item.blocks.length > 0 ? item.blocks : emptyLessonForm.blocks
   };
 }
@@ -149,6 +151,7 @@ function buildLessonPayload(form) {
     summary: form.summary,
     duration: form.duration,
     focus: form.focus,
+    objectives: form.objectives,
     blocks: form.blocks
   };
 }
@@ -343,6 +346,16 @@ export default function AdminCollectionPage({ collectionKey, title, description 
               [field]: value
             }
           : block
+      )
+    }));
+    setSaveMessage("");
+  }
+
+  function handleLessonObjectiveChange(index, value) {
+    setLessonForm((current) => ({
+      ...current,
+      objectives: current.objectives.map((objective, objectiveIndex) =>
+        objectiveIndex === index ? value : objective
       )
     }));
     setSaveMessage("");
@@ -757,6 +770,19 @@ export default function AdminCollectionPage({ collectionKey, title, description 
               Focus area
               <input name="focus" onChange={handleLessonChange} type="text" value={lessonForm.focus} />
             </label>
+            <div className="profile-field-span stack-sm">
+              <p className="eyebrow">Lesson objectives</p>
+              {lessonForm.objectives.map((objective, index) => (
+                <label key={`lesson-objective-${index}`}>
+                  {`Objective ${String(index + 1).padStart(2, "0")}`}
+                  <input
+                    onChange={(event) => handleLessonObjectiveChange(index, event.target.value)}
+                    type="text"
+                    value={objective}
+                  />
+                </label>
+              ))}
+            </div>
             <div className="profile-field-span stack-sm">
               <p className="eyebrow">Lesson blocks</p>
               {lessonForm.blocks.map((block, index) => (

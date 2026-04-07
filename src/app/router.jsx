@@ -9,6 +9,7 @@ const AdminCollectionPage = lazy(() => import("../pages/AdminCollectionPage.jsx"
 const AdminHomePage = lazy(() => import("../pages/AdminHomePage.jsx"));
 const CourseDetailPage = lazy(() => import("../pages/CourseDetailPage.jsx"));
 const CoursesPage = lazy(() => import("../pages/CoursesPage.jsx"));
+const CertificatesPage = lazy(() => import("../pages/CertificatesPage.jsx"));
 const DashboardPage = lazy(() => import("../pages/DashboardPage.jsx"));
 const GrammarPage = lazy(() => import("../pages/GrammarPage.jsx"));
 const LandingPage = lazy(() => import("../pages/LandingPage.jsx"));
@@ -19,6 +20,8 @@ const ProfilePage = lazy(() => import("../pages/ProfilePage.jsx"));
 const QuizPage = lazy(() => import("../pages/QuizPage.jsx"));
 const ReviewPage = lazy(() => import("../pages/ReviewPage.jsx"));
 const RegisterPage = lazy(() => import("../pages/RegisterPage.jsx"));
+const SettingsPage = lazy(() => import("../pages/SettingsPage.jsx"));
+const StudyPlanPage = lazy(() => import("../pages/StudyPlanPage.jsx"));
 
 function withSuspense(element) {
   return <Suspense fallback={<RouteFallback />}>{element}</Suspense>;
@@ -70,6 +73,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         )
       },
+      {
+        path: "certificates",
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<CertificatesPage />)}
+          </ProtectedRoute>
+        )
+      },
       { path: "courses", element: withSuspense(<CoursesPage />) },
       { path: "courses/:courseId", element: withSuspense(<CourseDetailPage />) },
       {
@@ -97,7 +108,31 @@ export const router = createBrowserRouter([
         )
       },
       {
+        path: "study-plan",
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<StudyPlanPage />)}
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "settings",
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<SettingsPage />)}
+          </ProtectedRoute>
+        )
+      },
+      {
         path: "review",
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<ReviewPage />)}
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "review/:mode",
         element: (
           <ProtectedRoute>
             {withSuspense(<ReviewPage />)}

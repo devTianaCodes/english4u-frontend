@@ -44,6 +44,8 @@ const placementQuestions = [
 export default function OnboardingPage() {
   const [answers, setAnswers] = useState({});
   const [existingRecommendation, setExistingRecommendation] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [historyTrend, setHistoryTrend] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,14 +59,21 @@ export default function OnboardingPage() {
 
     async function loadExistingRecommendation() {
       try {
-        const response = await apiRequest("/onboarding/recommendation");
+        const [response, historyResponse] = await Promise.all([
+          apiRequest("/onboarding/recommendation"),
+          apiRequest("/onboarding/history")
+        ]);
 
         if (!isCancelled) {
           setExistingRecommendation(response);
+          setHistory(historyResponse?.attempts ?? []);
+          setHistoryTrend(historyResponse?.trend ?? null);
         }
       } catch {
         if (!isCancelled) {
           setExistingRecommendation(null);
+          setHistory([]);
+          setHistoryTrend(null);
         }
       }
     }
@@ -96,12 +105,18 @@ export default function OnboardingPage() {
         method: "POST",
         body: JSON.stringify(payload)
       });
-      const recommendation = await apiRequest("/onboarding/recommendation");
+      const [recommendation, historyResponse] = await Promise.all([
+        apiRequest("/onboarding/recommendation"),
+        apiRequest("/onboarding/history")
+      ]);
 
       setResult({
         ...placementResult,
         recommendation
       });
+      setExistingRecommendation(recommendation);
+      setHistory(historyResponse?.attempts ?? []);
+      setHistoryTrend(historyResponse?.trend ?? null);
     } catch (submitError) {
       setError(submitError.message);
     } finally {
@@ -146,8 +161,40 @@ export default function OnboardingPage() {
             <strong>{existingRecommendation?.recommendedCourse?.title ?? "Guided path"}</strong>
             <span>course track</span>
           </div>
+          <div className="catalog-stat-card">
+            <strong>
+              {historyTrend === null ? "--" : historyTrend > 0 ? `+${historyTrend}` : historyTrend}
+            </strong>
+            <span>score trend</span>
+          </div>
         </div>
       </section>
+
+      {history.length ? (
+        <section className="section-card">
+          <div className="dashboard-section-heading">
+            <div>
+              <p className="eyebrow">Placement history</p>
+              <h2>Recent level checks</h2>
+            </div>
+            <p className="support-copy">Retake placement when your routine improves and compare the trend over time.</p>
+          </div>
+          <div className="dashboard-progress-list">
+            {history.map((attempt, index) => (
+              <article key={attempt.id} className="course-progress-card">
+                <div className="course-progress-copy">
+                  <p className="eyebrow">{index === 0 ? "Latest" : "Previous"}</p>
+                  <h3>{attempt.recommendedLevel} recommendation</h3>
+                  <p>
+                    Score {attempt.score} · {new Date(attempt.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <Button to="/courses" variant="secondary">Open path</Button>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="onboarding-grid">
         {placementQuestions.map((question, index) => (

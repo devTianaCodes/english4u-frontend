@@ -221,6 +221,23 @@ export default function QuizPage() {
             ) : null}
           </div>
 
+          {(result.questionResults ?? []).length ? (
+            <div className="quiz-review-list">
+              {(result.questionResults ?? []).map((question, index) => (
+                <article key={question.id} className={`quiz-review-card ${question.isCorrect ? "quiz-review-card-correct" : "quiz-review-card-missed"}`}>
+                  <div className="stack-sm">
+                    <p className="eyebrow">Question {String(index + 1).padStart(2, "0")}</p>
+                    <h3>{question.prompt}</h3>
+                    <p className="support-copy">
+                      Your answer: {question.selectedOptionText ?? "No answer"} · Correct: {question.correctOptionText}
+                    </p>
+                    <p>{question.explanation}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : null}
+
           <div className="section-card-footer">
             {result.nextLesson ? <Button to={`/lessons/${result.nextLesson.id}`}>Next lesson</Button> : <Button to="/dashboard">Back to dashboard</Button>}
             <Button to={result.courseId ? `/courses/${result.courseId}` : "/courses"} variant="secondary">

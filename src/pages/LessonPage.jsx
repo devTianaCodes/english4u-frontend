@@ -79,8 +79,8 @@ export default function LessonPage() {
         <section className="lesson-info-block">
           <h2>What you will learn</h2>
           <ul className="learning-outcomes">
-            {(lesson?.blocks ?? []).map((block) => (
-              <li key={block.id}>{block.title}</li>
+            {(lesson?.objectives ?? []).map((objective, index) => (
+              <li key={`${lesson?.id ?? "lesson"}-objective-${index}`}>{objective}</li>
             ))}
           </ul>
         </section>
@@ -202,6 +202,16 @@ export default function LessonPage() {
               <h1>{lesson?.title ?? lessonId}</h1>
               <p>{lesson?.summary ?? "Loading lesson content from the backend."}</p>
             </div>
+
+            {(lesson?.objectives ?? []).length ? (
+              <div className="lesson-objective-strip">
+                {lesson.objectives.map((objective, index) => (
+                  <span key={`${lesson.id}-objective-pill-${index}`} className="stat-chip">
+                    {objective}
+                  </span>
+                ))}
+              </div>
+            ) : null}
 
             {lesson ? (
               <div className="lesson-meta-row">

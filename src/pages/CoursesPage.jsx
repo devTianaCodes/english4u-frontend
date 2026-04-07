@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react";
 import Button from "../components/ui/Button.jsx";
+import { useAuth } from "../features/auth/AuthProvider.jsx";
 import { apiRequest, endpoints } from "../services/api.js";
 
 export default function CoursesPage() {
+  const { user } = useAuth();
   const [courses, setCourses] = useState([]);
+  const [dashboard, setDashboard] = useState(null);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [selectedLevels, setSelectedLevels] = useState([]);
-  const [sortBy, setSortBy] = useState("popular");
+  const [sortBy, setSortBy] = useState("recommended");
 
   useEffect(() => {
     let isCancelled = false;
 
     async function loadCourses() {
       try {
-        const response = await apiRequest(endpoints.courses);
+        const [coursesResponse, dashboardResponse] = await Promise.all([
+          apiRequest(endpoints.courses),
+          user ? apiRequest(endpoints.dashboard).catch(() => null) : Promise.resolve(null)
+        ]);
 
         if (!isCancelled) {
-          setCourses(response?.items ?? []);
+          setCourses(coursesResponse?.items ?? []);
+          setDashboard(dashboardResponse);
         }
       } catch (loadError) {
         if (!isCancelled) {
@@ -31,9 +38,11 @@ export default function CoursesPage() {
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [user]);
 
   const levels = Array.from(new Set(courses.map((course) => course.level))).sort();
+  const recommendedCourseId = courses.find((course) => course.level === dashboard?.currentLevel)?.id ?? null;
+  const currentCourseId = courses.find((course) => course.title === dashboard?.currentCourse)?.id ?? recommendedCourseId;
 
   const filteredCourses = courses
     .filter((course) => {
@@ -46,6 +55,15 @@ export default function CoursesPage() {
       return matchesSearch && matchesLevel;
     })
     .sort((left, right) => {
+      if (sortBy === "recommended") {
+        const leftRank = left.id === currentCourseId ? 0 : left.id === recommendedCourseId ? 1 : 2;
+        const rightRank = right.id === currentCourseId ? 0 : right.id === recommendedCourseId ? 1 : 2;
+
+        if (leftRank !== rightRank) {
+          return leftRank - rightRank;
+        }
+      }
+
       if (sortBy === "level") {
         return left.level.localeCompare(right.level);
       }
@@ -84,6 +102,12 @@ export default function CoursesPage() {
             <strong>{levels.join(" / ") || "A1 / A2"}</strong>
             <span>current levels</span>
           </div>
+          {dashboard ? (
+            <div className="catalog-stat-card">
+              <strong>{dashboard.currentLevel}</strong>
+              <span>your active level</span>
+            </div>
+          ) : null}
         </div>
       </section>
 
@@ -129,6 +153,7 @@ export default function CoursesPage() {
           <label className="filter-field">
             Sort by
             <select onChange={(event) => setSortBy(event.target.value)} value={sortBy}>
+              <option value="recommended">Recommended first</option>
               <option value="popular">Most complete</option>
               <option value="duration">Shortest duration</option>
               <option value="level">Level</option>
@@ -137,6 +162,26 @@ export default function CoursesPage() {
         </aside>
 
         <div className="courses-main">
+          {dashboard ? (
+            <section className="section-card section-card-featured">
+              <div className="dashboard-section-heading">
+                <div>
+                  <p className="eyebrow">Recommended for you</p>
+                  <h2>{dashboard.currentCourse}</h2>
+                </div>
+                <p className="support-copy">
+                  Placement level {dashboard.currentLevel} · next lesson {dashboard.nextLesson?.title ?? "ready in your path"}
+                </p>
+              </div>
+              <div className="section-card-footer">
+                <Button to={currentCourseId ? `/courses/${currentCourseId}` : "/dashboard"}>Open recommended path</Button>
+                <Button to={dashboard.nextLesson ? `/lessons/${dashboard.nextLesson.id}` : "/dashboard"} variant="secondary">
+                  Continue next lesson
+                </Button>
+              </div>
+            </section>
+          ) : null}
+
           <div className="courses-toolbar">
             <p className="support-copy">{filteredCourses.length} course{filteredCourses.length === 1 ? "" : "s"} available</p>
             <Button to="/onboarding" variant="secondary">Take placement test</Button>
@@ -158,6 +203,8 @@ export default function CoursesPage() {
                   </div>
 
                   <div className="course-card-badges">
+                    {course.id === currentCourseId ? <span className="course-badge-strong">current path</span> : null}
+                    {course.id === recommendedCourseId && course.id !== currentCourseId ? <span className="course-badge-strong">placement match</span> : null}
                     <span>{course.unitCount ?? 0} units</span>
                     <span>{course.lessonCount ?? 0} lessons</span>
                     <span>{course.estimatedWeeks ?? 4} weeks</span>
@@ -166,7 +213,13 @@ export default function CoursesPage() {
                   <div className="course-card-footer">
                     <div className="stack-sm">
                       <span className="metric-label">Best for</span>
-                      <strong>{course.level} self-paced learners</strong>
+                      <strong>
+                        {course.id === currentCourseId
+                          ? "your active path"
+                          : course.id === recommendedCourseId
+                            ? "best placement match"
+                            : `${course.level} self-paced learners`}
+                      </strong>
                     </div>
                     <Button to={`/courses/${course.id}`} variant="secondary">Explore course</Button>
                   </div>

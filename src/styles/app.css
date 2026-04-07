@@ -42,6 +42,10 @@
   align-items: center;
 }
 
+.topbar-drawer {
+  display: contents;
+}
+
 .topbar-center {
   flex: 1;
   justify-content: center;
@@ -114,6 +118,17 @@
   display: flex;
   align-items: center;
   gap: 0.85rem;
+}
+
+.mobile-nav-toggle {
+  display: none;
+  min-height: 2.9rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--color-text);
+  font-weight: 700;
 }
 
 .theme-toggle {
@@ -490,6 +505,72 @@
   align-items: start;
 }
 
+.dashboard-layout-shell {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.3fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.dashboard-sidebar-rail {
+  position: sticky;
+  top: 6rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.dashboard-sidebar-card {
+  align-content: start;
+}
+
+.dashboard-sidebar-links {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.dashboard-sidebar-link {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 1rem;
+  text-align: left;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.dashboard-sidebar-link span,
+.dashboard-sidebar-link small {
+  display: block;
+}
+
+.dashboard-sidebar-link span {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.dashboard-sidebar-link small {
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+}
+
+.dashboard-sidebar-metric {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.dashboard-sidebar-metric strong {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--color-text);
+}
+
+.dashboard-sidebar-metric span {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .filters-panel {
   position: sticky;
   top: 6rem;
@@ -613,6 +694,45 @@
   min-width: 0;
 }
 
+.course-instructor-card,
+.course-review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.course-instructor-avatar {
+  width: 3.2rem;
+  height: 3.2rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-deep));
+  color: white;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.course-review-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.course-review-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.course-review-top span {
+  color: #d4af37;
+  letter-spacing: 0.08em;
+}
+
 .course-card-content {
   display: grid;
   gap: 1rem;
@@ -642,6 +762,13 @@
   background: rgba(0, 102, 204, 0.05);
   color: var(--color-text);
   font-size: 0.85rem;
+}
+
+.course-badge-strong {
+  border-color: rgba(255, 183, 76, 0.24) !important;
+  background: rgba(255, 183, 76, 0.14) !important;
+  color: var(--color-text) !important;
+  font-weight: 700;
 }
 
 .course-detail-meta span {
@@ -675,6 +802,12 @@
 .course-modules,
 .lesson-list {
   margin-top: 0.2rem;
+}
+
+.module-progress-strip,
+.module-checkpoint-card {
+  display: grid;
+  gap: 0.75rem;
 }
 
 .module-card {
@@ -1099,7 +1232,8 @@
 .review-hero-copy,
 .review-hero-stats,
 .review-session,
-.review-category-grid {
+.review-category-grid,
+.review-mode-grid {
   min-width: 0;
 }
 
@@ -1132,14 +1266,34 @@
 }
 
 .review-hero-stats,
+.review-mode-grid,
 .review-category-grid,
 .review-question-list {
   display: grid;
   gap: 1rem;
 }
 
+.review-mode-grid,
 .review-category-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.review-mode-card {
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.review-mode-card-active {
+  border-color: rgba(15, 154, 142, 0.35);
+  box-shadow: 0 20px 40px rgba(15, 154, 142, 0.12);
+  background:
+    linear-gradient(135deg, rgba(255, 183, 76, 0.16), rgba(15, 154, 142, 0.1)),
+    rgba(255, 255, 255, 0.82);
+}
+
+.lesson-objective-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .onboarding-hero,
@@ -1574,6 +1728,40 @@
   background: rgba(255, 255, 255, 0.46);
 }
 
+.module-checkpoint-card {
+  padding: 1rem;
+  border: 1px solid rgba(0, 102, 204, 0.12);
+  border-radius: var(--radius-lg);
+  background: rgba(0, 102, 204, 0.05);
+}
+
+.quiz-review-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.quiz-review-card {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.quiz-review-card-correct {
+  border-color: rgba(15, 154, 142, 0.2);
+}
+
+.quiz-review-card-missed {
+  border-color: rgba(255, 183, 76, 0.35);
+  background: rgba(255, 183, 76, 0.08);
+}
+
+.quiz-review-card h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
 .lesson-row h3 {
   font-family: var(--font-display);
   font-size: 1.05rem;
@@ -1651,18 +1839,22 @@
 .grammar-hero,
 .grammar-layout,
 .grammar-detail-grid,
-.review-grammar-grid {
+.review-grammar-grid,
+.study-plan-hero {
   display: grid;
   gap: 1.25rem;
 }
 
 .grammar-hero,
-.grammar-detail-grid {
+.grammar-detail-grid,
+.study-plan-hero {
   grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 1fr);
 }
 
 .grammar-hero-copy,
 .grammar-hero-stats,
+.study-plan-hero-copy,
+.study-plan-hero-panel,
 .grammar-sidebar,
 .grammar-main,
 .review-grammar-strip {
@@ -1671,6 +1863,8 @@
 
 .grammar-hero-copy,
 .grammar-hero-stats,
+.study-plan-hero-copy,
+.study-plan-hero-panel,
 .grammar-sidebar .section-card,
 .grammar-main .section-card {
   padding: 1.5rem;
@@ -1685,9 +1879,20 @@
   gap: 0.9rem;
 }
 
-.grammar-hero-copy h1 {
+.grammar-hero-copy h1,
+.study-plan-hero-copy h1 {
   font-size: clamp(2.4rem, 5vw, 4rem);
   letter-spacing: -0.05em;
+}
+
+.study-plan-hero-copy,
+.study-plan-hero-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.study-plan-hero-panel .weekly-study-card {
+  min-height: 100%;
 }
 
 .grammar-hero-stats,
@@ -1771,11 +1976,13 @@
   .course-detail-hero,
   .catalog-layout,
   .course-detail-layout,
+  .dashboard-layout-shell,
   .auth-layout,
   .review-hero,
   .grammar-hero,
   .grammar-layout,
   .grammar-detail-grid,
+  .study-plan-hero,
   .onboarding-hero,
   .onboarding-result,
   .grid-2,
@@ -1793,8 +2000,42 @@
 
   .topbar {
     border-radius: var(--radius-xl);
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .mobile-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .topbar-drawer {
+    display: none;
+    grid-column: 1 / -1;
+    gap: 1rem;
+    padding-top: 0.5rem;
+  }
+
+  .topbar-drawer-open {
+    display: grid;
+  }
+
+  .topbar-center,
+  .nav,
+  .topbar-actions {
+    justify-content: flex-start;
     align-items: stretch;
+  }
+
+  .nav,
+  .topbar-actions {
+    flex-direction: column;
+  }
+
+  .topbar-actions > * {
+    width: 100%;
   }
 
   .topbar-center {
@@ -1819,11 +2060,6 @@
     flex-direction: column;
   }
 
-  .nav,
-  .topbar-actions {
-    justify-content: center;
-  }
-
   .nav-link,
   .button,
   .button-ghost,
@@ -1832,6 +2068,10 @@
   }
 
   .filters-panel {
+    position: static;
+  }
+
+  .dashboard-sidebar-rail {
     position: static;
   }
 
@@ -1858,6 +2098,7 @@
   .catalog-hero-stats,
   .dashboard-stats-grid,
   .achievement-grid,
+  .review-mode-grid,
   .quiz-result-details,
   .review-category-grid,
   .review-grammar-grid,

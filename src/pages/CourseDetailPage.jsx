@@ -3,6 +3,24 @@ import { useParams } from "react-router-dom";
 import Button from "../components/ui/Button.jsx";
 import { apiRequest } from "../services/api.js";
 
+function buildUnitProgress(unit, completedLessonSlugs, nextLessonId) {
+  const completedLessons = unit.lessons.filter((lesson) => completedLessonSlugs.has(lesson.id)).length;
+  const nextLesson = unit.lessons.find((lesson) => lesson.id === nextLessonId) ?? null;
+  const progress = unit.lessonCount ? Math.round((completedLessons / unit.lessonCount) * 100) : 0;
+
+  return {
+    completedLessons,
+    progress,
+    nextLesson,
+    isComplete: completedLessons === unit.lessonCount,
+    isActive: Boolean(nextLesson)
+  };
+}
+
+function renderRating(rating) {
+  return "★".repeat(rating) + "☆".repeat(Math.max(5 - rating, 0));
+}
+
 export default function CourseDetailPage() {
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
@@ -41,6 +59,11 @@ export default function CourseDetailPage() {
   const nextLessonId = progress?.nextLesson?.id ?? null;
   const firstLessonId = course?.units[0]?.lessons[0]?.id ?? "";
   const courseProgress = course?.lessonCount ? Math.round((completedLessonSlugs.size / course.lessonCount) * 100) : 0;
+  const unitsWithProgress = (course?.units ?? []).map((unit) => ({
+    ...unit,
+    progress: buildUnitProgress(unit, completedLessonSlugs, nextLessonId)
+  }));
+  const activeUnit = unitsWithProgress.find((unit) => unit.progress.isActive) ?? unitsWithProgress[0] ?? null;
   const learningOutcomes = [
     `Progress through ${course?.unitCount ?? 0} structured units with visible lesson milestones.`,
     `Build confidence through ${course?.lessonCount ?? 0} guided lessons and checkpoint practice.`,
@@ -104,6 +127,22 @@ export default function CourseDetailPage() {
               </div>
             </div>
           </div>
+
+          {activeUnit ? (
+            <div className="course-info-card">
+              <h2>Current unit</h2>
+              <strong>{activeUnit.title}</strong>
+              <p className="support-copy">{activeUnit.progress.completedLessons} of {activeUnit.lessonCount} lessons complete</p>
+              <div className="progress-bar">
+                <div className="progress-bar-fill" style={{ width: `${activeUnit.progress.progress}%` }} />
+              </div>
+              <div className="section-card-footer">
+                <Button to={activeUnit.progress.nextLesson ? `/lessons/${activeUnit.progress.nextLesson.id}` : `/quizzes/${activeUnit.lessons[activeUnit.lessons.length - 1]?.id}-quiz`} variant="secondary">
+                  {activeUnit.progress.nextLesson ? "Open next lesson" : "Open checkpoint"}
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </aside>
       </section>
 
@@ -121,17 +160,27 @@ export default function CourseDetailPage() {
           <section className="course-section">
             <h2>Course structure</h2>
             <div className="course-modules">
-              {(course?.units ?? []).map((unit, index) => (
+              {unitsWithProgress.map((unit, index) => (
                 <article key={unit.id} className="module-card">
                   <div className="module-card-top">
                     <div className="stack-sm">
                       <p className="eyebrow">{unit.positionLabel ?? `Unit ${String(index + 1).padStart(2, "0")}`}</p>
                       <h3>{unit.title}</h3>
                     </div>
-                    <span className="module-card-count">{unit.lessonCount} lessons</span>
+                    <span className="module-card-count">
+                      {unit.progress.isComplete ? "Complete" : `${unit.lessonCount} lessons`}
+                    </span>
                   </div>
                   <p>{unit.summary}</p>
                   <p className="support-copy">{unit.checkpointLabel}</p>
+                  <div className="module-progress-strip">
+                    <div className="progress-bar">
+                      <div className="progress-bar-fill" style={{ width: `${unit.progress.progress}%` }} />
+                    </div>
+                    <p className="support-copy">
+                      {unit.progress.completedLessons} of {unit.lessonCount} complete · {unit.progress.progress}%
+                    </p>
+                  </div>
                   <div className="lesson-list">
                     {unit.lessons.map((lesson, lessonIndex) => (
                       <div key={lesson.id} className="lesson-row">
@@ -153,6 +202,32 @@ export default function CourseDetailPage() {
                       </div>
                     ))}
                   </div>
+                  <div className="module-checkpoint-card">
+                    <div className="stack-sm">
+                      <p className="eyebrow">Checkpoint</p>
+                      <strong>{unit.checkpointLabel}</strong>
+                      <p className="support-copy">
+                        {unit.progress.isComplete
+                          ? "Unit complete. Use the checkpoint and review lanes to reinforce the full unit."
+                          : unit.progress.nextLesson
+                            ? `Finish ${unit.progress.nextLesson.title} to unlock the strongest checkpoint moment.`
+                            : "Continue the unit lessons to unlock the best checkpoint timing."}
+                      </p>
+                    </div>
+                    <div className="button-row">
+                      <Button
+                        to={
+                          unit.progress.nextLesson
+                            ? `/lessons/${unit.progress.nextLesson.id}`
+                            : `/quizzes/${unit.lessons[unit.lessons.length - 1]?.id}-quiz`
+                        }
+                        variant="secondary"
+                      >
+                        {unit.progress.nextLesson ? "Continue unit" : "Take checkpoint"}
+                      </Button>
+                      <Button to="/review" variant="ghost">Open review</Button>
+                    </div>
+                  </div>
                 </article>
               ))}
             </div>
@@ -160,6 +235,26 @@ export default function CourseDetailPage() {
         </div>
 
         <aside className="course-detail-side-notes">
+          {course?.instructor ? (
+            <div className="course-info-card">
+              <p className="eyebrow">Instructor</p>
+              <div className="course-instructor-card">
+                <div className="course-instructor-avatar">
+                  {course.instructor.name
+                    .split(" ")
+                    .map((part) => part[0])
+                    .join("")
+                    .slice(0, 2)}
+                </div>
+                <div className="stack-sm">
+                  <strong>{course.instructor.name}</strong>
+                  <span className="support-copy">{course.instructor.title}</span>
+                </div>
+              </div>
+              <p className="support-copy">{course.instructor.bio}</p>
+            </div>
+          ) : null}
+
           <div className="course-info-card">
             <h2>Suggested rhythm</h2>
             <p className="support-copy">
@@ -173,6 +268,23 @@ export default function CourseDetailPage() {
               Learners who want a guided self-paced routine with visible milestones instead of a flat content archive.
             </p>
           </div>
+
+          {course?.reviews?.length ? (
+            <div className="course-info-card">
+              <p className="eyebrow">Learner reviews</p>
+              <div className="course-review-list">
+                {course.reviews.map((review) => (
+                  <article key={review.id} className="course-review-card">
+                    <div className="course-review-top">
+                      <strong>{review.author}</strong>
+                      <span>{renderRating(review.rating)}</span>
+                    </div>
+                    <p className="support-copy">{review.text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </aside>
       </section>
     </div>
