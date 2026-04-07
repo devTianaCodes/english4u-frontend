@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthProvider.jsx";
+import { useTheme } from "../../features/theme/useTheme.js";
 import Button from "../ui/Button.jsx";
 
 const learnerLinks = [
@@ -17,6 +18,7 @@ const adminLinks = [
 export default function AppShell() {
   const navigate = useNavigate();
   const { isLoading, logout, user } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   async function handleLogout() {
     await logout();
@@ -54,6 +56,14 @@ export default function AppShell() {
         </div>
 
         <div className="topbar-actions">
+          <button
+            aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
+            className="theme-toggle"
+            onClick={toggleTheme}
+            type="button"
+          >
+            {isDark ? "Light mode" : "Dark mode"}
+          </button>
           {isLoading ? (
             <span className="session-pill">Checking session...</span>
           ) : user ? (

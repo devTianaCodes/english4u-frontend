@@ -10,12 +10,28 @@
   --color-secondary-deep: #b9931c;
   --color-border: rgba(26, 58, 82, 0.12);
   --shadow-soft: 0 24px 60px rgba(26, 58, 82, 0.12);
+  --color-progress-track: rgba(26, 58, 82, 0.08);
   --radius-xl: 20px;
   --radius-lg: 14px;
   --radius-md: 8px;
   --content-width: 1180px;
   --font-display: "Segoe UI", "Trebuchet MS", sans-serif;
   --font-body: "Segoe UI", "Trebuchet MS", sans-serif;
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0f1a24;
+  --color-surface: rgba(18, 30, 42, 0.9);
+  --color-surface-strong: #152231;
+  --color-text: #edf3f8;
+  --color-text-muted: #a9bac7;
+  --color-accent: #4b9cff;
+  --color-accent-deep: #2d79d8;
+  --color-secondary: #e3bf59;
+  --color-secondary-deep: #c39c2d;
+  --color-border: rgba(138, 168, 191, 0.18);
+  --shadow-soft: 0 24px 60px rgba(2, 8, 14, 0.34);
+  --color-progress-track: rgba(138, 168, 191, 0.16);
 }
 
 body {
@@ -26,4 +42,11 @@ body {
     radial-gradient(circle at top right, rgba(212, 175, 55, 0.14), transparent 26%),
     linear-gradient(180deg, #ffffff 0%, #f5f7fa 54%, #edf2f7 100%);
   font-family: var(--font-body);
+}
+
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at top left, rgba(75, 156, 255, 0.2), transparent 28%),
+    radial-gradient(circle at top right, rgba(227, 191, 89, 0.16), transparent 24%),
+    linear-gradient(180deg, #0f1a24 0%, #132231 55%, #182837 100%);
 }

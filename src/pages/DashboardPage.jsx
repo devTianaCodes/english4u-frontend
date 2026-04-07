@@ -67,6 +67,27 @@ export default function DashboardPage() {
     { label: "Quiz average", value: `${dashboard?.quizAverage ?? 0}%`, note: "latest score" }
   ];
 
+  const achievements = [
+    {
+      title: "Consistency streak",
+      icon: "St",
+      note: `Active for ${dashboard?.streak ?? 0} consecutive learning days`,
+      meta: "earned this week"
+    },
+    {
+      title: "Checkpoint focus",
+      icon: "Qz",
+      note: `${dashboard?.quizAverage ?? 0}% average across recent quizzes`,
+      meta: "performance badge"
+    },
+    {
+      title: "Course momentum",
+      icon: dashboard?.currentLevel ?? "A1",
+      note: `${dashboard?.completedLessons ?? 0} completed lessons in the current path`,
+      meta: "path progress"
+    }
+  ];
+
   return (
     <div className="stack-lg">
       <section className="dashboard-hero">
@@ -162,6 +183,43 @@ export default function DashboardPage() {
           </article>
         ))}
         </div>
+      </section>
+
+      <section className="dashboard-grid">
+        <article className="section-card">
+          <p className="eyebrow">Achievements</p>
+          <h2>Your milestones</h2>
+          <div className="achievement-grid">
+            {achievements.map((achievement) => (
+              <div key={achievement.title} className="achievement-card">
+                <div className="achievement-icon">{achievement.icon}</div>
+                <div className="stack-sm">
+                  <strong>{achievement.title}</strong>
+                  <p>{achievement.note}</p>
+                  <span className="metric-label">{achievement.meta}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="section-card section-card-featured">
+          <p className="eyebrow">Level progress</p>
+          <h2>Your English level</h2>
+          <div className="level-progress-card">
+            <div className="level-progress-top">
+              <span>Current</span>
+              <strong>{dashboard?.currentLevel ?? "A1"}</strong>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-bar-fill" style={{ width: `${Math.min((dashboard?.quizAverage ?? 0), 100)}%` }} />
+            </div>
+            <p className="support-copy">
+              Next target: {dashboard?.currentLevel === "A2" ? "B1" : "A2"} · keep quiz results above 75% and finish the
+              current unit checkpoint.
+            </p>
+          </div>
+        </article>
       </section>
     </div>
   );

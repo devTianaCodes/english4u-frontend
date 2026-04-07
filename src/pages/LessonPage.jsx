@@ -1,10 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import SectionCard from "../components/layout/SectionCard.jsx";
+import Button from "../components/ui/Button.jsx";
 import { apiRequest } from "../services/api.js";
+
+const lessonTabs = [
+  { id: "overview", label: "Overview" },
+  { id: "transcript", label: "Transcript" },
+  { id: "resources", label: "Resources" },
+  { id: "exercises", label: "Exercises" }
+];
+
+function groupBlocks(blocks) {
+  return blocks.reduce(
+    (groups, block) => {
+      groups[block.type] = [...(groups[block.type] ?? []), block];
+      return groups;
+    },
+    {}
+  );
+}
 
 export default function LessonPage() {
   const { lessonId } = useParams();
+  const [activeTab, setActiveTab] = useState("overview");
   const [lesson, setLesson] = useState(null);
   const [completion, setCompletion] = useState(null);
   const [error, setError] = useState("");
@@ -19,6 +37,7 @@ export default function LessonPage() {
 
         if (!isCancelled) {
           setLesson(response);
+          setActiveTab("overview");
         }
       } catch (loadError) {
         if (!isCancelled) {
@@ -33,6 +52,8 @@ export default function LessonPage() {
       isCancelled = true;
     };
   }, [lessonId]);
+
+  const groupedBlocks = useMemo(() => groupBlocks(lesson?.blocks ?? []), [lesson?.blocks]);
 
   async function handleCompleteLesson() {
     setError("");
@@ -51,82 +72,196 @@ export default function LessonPage() {
     }
   }
 
+  const transcript = (lesson?.blocks ?? []).map((block) => `${block.title}. ${block.content}`).join(" ");
+  const tabContent = {
+    overview: (
+      <div className="lesson-tab-panel">
+        <section className="lesson-info-block">
+          <h2>What you will learn</h2>
+          <ul className="learning-outcomes">
+            {(lesson?.blocks ?? []).map((block) => (
+              <li key={block.id}>{block.title}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="lesson-info-block">
+          <h2>Key vocabulary</h2>
+          <div className="vocabulary-grid">
+            {(groupedBlocks.vocabulary ?? lesson?.blocks ?? []).map((block) => (
+              <article key={block.id} className="vocab-item">
+                <strong>{block.title}</strong>
+                <p>{block.content}</p>
+                <span>{block.accent}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    ),
+    transcript: (
+      <div className="lesson-tab-panel">
+        <section className="lesson-info-block">
+          <h2>Lesson transcript</h2>
+          <p>{transcript || "Transcript will appear when lesson blocks load."}</p>
+        </section>
+      </div>
+    ),
+    resources: (
+      <div className="lesson-tab-panel">
+        <section className="lesson-info-block">
+          <h2>Lesson resources</h2>
+          <div className="resource-grid">
+            {(lesson?.blocks ?? []).map((block) => (
+              <article key={block.id} className="resource-card">
+                <p className="eyebrow">{block.type}</p>
+                <strong>{block.title}</strong>
+                <p>{block.accent}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    ),
+    exercises: (
+      <div className="lesson-tab-panel">
+        <section className="lesson-info-block">
+          <h2>Practice tasks</h2>
+          <div className="exercise-list">
+            {(lesson?.blocks ?? []).map((block) => (
+              <article key={block.id} className="exercise-card">
+                <div className="stack-sm">
+                  <p className="eyebrow">{block.type}</p>
+                  <strong>{block.title}</strong>
+                  <p>{block.content}</p>
+                </div>
+                <span>{block.accent}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    )
+  };
+
   return (
     <div className="stack-lg">
-      <SectionCard
-        eyebrow="Lesson"
-        title={lesson?.title ?? lessonId}
-        footer={
-          <>
-            {lesson?.previousLesson ? (
-              <Link className="button button-ghost" to={`/lessons/${lesson.previousLesson.id}`}>
-                Previous lesson
-              </Link>
-            ) : lesson?.courseId ? (
-              <Link className="button button-ghost" to={`/courses/${lesson.courseId}`}>
-                Back to course
-              </Link>
+      <section className="lesson-player">
+        <div className="lesson-main">
+          <header className="lesson-header">
+            <div className="lesson-header-top">
+              {lesson?.courseId ? (
+                <Link className="button button-ghost" to={`/courses/${lesson.courseId}`}>
+                  Back to course
+                </Link>
+              ) : null}
+              <div className="lesson-progress-inline">
+                <span>{lesson?.positionLabel ?? "Lesson"}</span>
+                <div className="progress-bar">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: `${lesson?.totalLessons ? Math.max((1 / lesson.totalLessons) * 100, 12) : 18}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="stack-sm">
+              <p className="eyebrow">Lesson player</p>
+              <h1>{lesson?.title ?? lessonId}</h1>
+              <p>{lesson?.summary ?? "Loading lesson content from the backend."}</p>
+            </div>
+
+            {lesson ? (
+              <div className="lesson-meta-row">
+                <span>{lesson.unitTitle}</span>
+                <span>{lesson.courseTitle}</span>
+                <span>{lesson.totalLessons ?? 0} lessons in path</span>
+              </div>
             ) : null}
-            <button className="button button-ghost" disabled={isSubmitting} onClick={handleCompleteLesson} type="button">
+          </header>
+
+          <div className="lesson-stage">
+            <div className="lesson-stage-card">
+              <div className="lesson-stage-screen">
+                <p className="metric-label">Lesson preview</p>
+                <strong>{lesson?.title ?? "Guided lesson"}</strong>
+                <p>
+                  {lesson?.summary ??
+                    "Structured reading, vocabulary, and grammar blocks stay in one focused learning player."}
+                </p>
+              </div>
+
+              <div className="lesson-stage-controls">
+                <button className="button button-ghost" type="button">1.5x speed</button>
+                <button className="button button-ghost" type="button">Subtitles</button>
+                <button className="button button-ghost" type="button">Focus mode</button>
+              </div>
+            </div>
+
+            <div className="lesson-tabs">
+              {lessonTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  className={`lesson-tab ${activeTab === tab.id ? "lesson-tab-active" : ""}`}
+                  onClick={() => setActiveTab(tab.id)}
+                  type="button"
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {tabContent[activeTab]}
+          </div>
+        </div>
+
+        <aside className="lesson-sidebar">
+          <div className="lesson-sidebar-card">
+            <h2>Lesson complete?</h2>
+            <p>Save this lesson, update streak and completed totals, then move to the checkpoint.</p>
+            <Button disabled={isSubmitting} onClick={handleCompleteLesson}>
               {isSubmitting ? "Saving..." : completion ? "Completed" : "Mark lesson complete"}
-            </button>
-            <Link className="button" to={`/quizzes/${lesson?.quizId ?? `${lessonId}-quiz`}`}>
-              Finish with quiz
-            </Link>
-          </>
-        }
-      >
-        <p>{lesson?.summary ?? "Loading lesson content from the backend."}</p>
-        {lesson ? (
-          <div className="stat-row stat-row-compact">
-            <div className="stat-chip">
-              <strong>{lesson.positionLabel ?? "Lesson"}</strong>
-              <span>{lesson.unitTitle}</span>
-            </div>
-            <div className="stat-chip">
-              <strong>{lesson.totalLessons ?? 0}</strong>
-              <span>{lesson.courseTitle}</span>
-            </div>
-          </div>
-        ) : null}
-        {completion ? (
-          <div className="stack-sm">
-            <p className="success-copy">Lesson saved with status: {completion.status}.</p>
-            {completion.streak ? (
-              <p className="support-copy">
-                Current streak: {completion.streak} · Completed lessons: {completion.completedLessons}
-              </p>
+            </Button>
+            {completion ? (
+              <div className="stack-sm">
+                <p className="success-copy">Saved with status: {completion.status}.</p>
+                <p className="support-copy">
+                  Current streak: {completion.streak} · Completed lessons: {completion.completedLessons}
+                </p>
+                {completion.message ? <p className="support-copy">{completion.message}</p> : null}
+              </div>
             ) : null}
-            {completion.message ? <p className="support-copy">{completion.message}</p> : null}
           </div>
-        ) : null}
-        {error ? <p className="form-error">{error}</p> : null}
-      </SectionCard>
 
-      {lesson?.nextLesson ? (
-        <SectionCard
-          eyebrow="Continue path"
-          title={lesson.nextLesson.title}
-          footer={
-            <Link className="button" to={`/lessons/${lesson.nextLesson.id}`}>
-              Open next lesson
-            </Link>
-          }
-        >
-          <p className="support-copy">
-            Keep moving through {lesson.courseTitle} with the next lesson in sequence.
-          </p>
-        </SectionCard>
-      ) : null}
+          <div className="lesson-sidebar-card">
+            <h2>Navigation</h2>
+            <div className="stack-sm">
+              {lesson?.previousLesson ? (
+                <Button to={`/lessons/${lesson.previousLesson.id}`} variant="secondary">
+                  Previous lesson
+                </Button>
+              ) : null}
+              <Button to={`/quizzes/${lesson?.quizId ?? `${lessonId}-quiz`}`}>Finish with quiz</Button>
+              {lesson?.nextLesson ? (
+                <Button to={`/lessons/${lesson.nextLesson.id}`} variant="secondary">
+                  Next lesson
+                </Button>
+              ) : null}
+            </div>
+          </div>
 
-      <div className="grid grid-2">
-        {(lesson?.blocks ?? []).map((block) => (
-          <SectionCard key={block.id} eyebrow={block.type} title={block.title}>
-            <p>{block.content}</p>
-            <p className="support-copy">{block.accent}</p>
-          </SectionCard>
-        ))}
-      </div>
+          {lesson?.nextLesson ? (
+            <div className="lesson-sidebar-card">
+              <p className="eyebrow">Next in path</p>
+              <strong>{lesson.nextLesson.title}</strong>
+              <p className="support-copy">Keep moving through {lesson.courseTitle} with the next lesson in sequence.</p>
+            </div>
+          ) : null}
+
+          {error ? <p className="form-error">{error}</p> : null}
+        </aside>
+      </section>
     </div>
   );
 }
