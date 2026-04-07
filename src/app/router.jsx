@@ -1,31 +1,38 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import AppShell from "../components/layout/AppShell.jsx";
-import AdminCollectionPage from "../pages/AdminCollectionPage.jsx";
-import AdminHomePage from "../pages/AdminHomePage.jsx";
-import CourseDetailPage from "../pages/CourseDetailPage.jsx";
-import CoursesPage from "../pages/CoursesPage.jsx";
-import DashboardPage from "../pages/DashboardPage.jsx";
+import RouteFallback from "../components/ui/RouteFallback.jsx";
 import GuestRoute from "../features/auth/GuestRoute.jsx";
 import ProtectedRoute from "../features/auth/ProtectedRoute.jsx";
-import LandingPage from "../pages/LandingPage.jsx";
-import LessonPage from "../pages/LessonPage.jsx";
-import LoginPage from "../pages/LoginPage.jsx";
-import OnboardingPage from "../pages/OnboardingPage.jsx";
-import ProfilePage from "../pages/ProfilePage.jsx";
-import QuizPage from "../pages/QuizPage.jsx";
-import RegisterPage from "../pages/RegisterPage.jsx";
+
+const AdminCollectionPage = lazy(() => import("../pages/AdminCollectionPage.jsx"));
+const AdminHomePage = lazy(() => import("../pages/AdminHomePage.jsx"));
+const CourseDetailPage = lazy(() => import("../pages/CourseDetailPage.jsx"));
+const CoursesPage = lazy(() => import("../pages/CoursesPage.jsx"));
+const DashboardPage = lazy(() => import("../pages/DashboardPage.jsx"));
+const LandingPage = lazy(() => import("../pages/LandingPage.jsx"));
+const LessonPage = lazy(() => import("../pages/LessonPage.jsx"));
+const LoginPage = lazy(() => import("../pages/LoginPage.jsx"));
+const OnboardingPage = lazy(() => import("../pages/OnboardingPage.jsx"));
+const ProfilePage = lazy(() => import("../pages/ProfilePage.jsx"));
+const QuizPage = lazy(() => import("../pages/QuizPage.jsx"));
+const RegisterPage = lazy(() => import("../pages/RegisterPage.jsx"));
+
+function withSuspense(element) {
+  return <Suspense fallback={<RouteFallback />}>{element}</Suspense>;
+}
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <AppShell />,
     children: [
-      { index: true, element: <LandingPage /> },
+      { index: true, element: withSuspense(<LandingPage />) },
       {
         path: "login",
         element: (
           <GuestRoute>
-            <LoginPage />
+            {withSuspense(<LoginPage />)}
           </GuestRoute>
         )
       },
@@ -33,7 +40,7 @@ export const router = createBrowserRouter([
         path: "register",
         element: (
           <GuestRoute>
-            <RegisterPage />
+            {withSuspense(<RegisterPage />)}
           </GuestRoute>
         )
       },
@@ -41,7 +48,7 @@ export const router = createBrowserRouter([
         path: "onboarding",
         element: (
           <ProtectedRoute>
-            <OnboardingPage />
+            {withSuspense(<OnboardingPage />)}
           </ProtectedRoute>
         )
       },
@@ -49,17 +56,17 @@ export const router = createBrowserRouter([
         path: "dashboard",
         element: (
           <ProtectedRoute>
-            <DashboardPage />
+            {withSuspense(<DashboardPage />)}
           </ProtectedRoute>
         )
       },
-      { path: "courses", element: <CoursesPage /> },
-      { path: "courses/:courseId", element: <CourseDetailPage /> },
+      { path: "courses", element: withSuspense(<CoursesPage />) },
+      { path: "courses/:courseId", element: withSuspense(<CourseDetailPage />) },
       {
         path: "lessons/:lessonId",
         element: (
           <ProtectedRoute>
-            <LessonPage />
+            {withSuspense(<LessonPage />)}
           </ProtectedRoute>
         )
       },
@@ -67,7 +74,7 @@ export const router = createBrowserRouter([
         path: "quizzes/:quizId",
         element: (
           <ProtectedRoute>
-            <QuizPage />
+            {withSuspense(<QuizPage />)}
           </ProtectedRoute>
         )
       },
@@ -75,7 +82,7 @@ export const router = createBrowserRouter([
         path: "profile",
         element: (
           <ProtectedRoute>
-            <ProfilePage />
+            {withSuspense(<ProfilePage />)}
           </ProtectedRoute>
         )
       },
@@ -83,7 +90,7 @@ export const router = createBrowserRouter([
         path: "admin",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminHomePage />
+            {withSuspense(<AdminHomePage />)}
           </ProtectedRoute>
         )
       },
@@ -91,11 +98,11 @@ export const router = createBrowserRouter([
         path: "admin/courses",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage
+            {withSuspense(<AdminCollectionPage
               collectionKey="courses"
               title="Courses"
               description="Manage public learning paths and publishing state."
-            />
+            />)}
           </ProtectedRoute>
         )
       },
@@ -103,11 +110,11 @@ export const router = createBrowserRouter([
         path: "admin/levels",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage
+            {withSuspense(<AdminCollectionPage
               collectionKey="levels"
               title="Levels"
               description="Organize CEFR-style progression and prerequisites."
-            />
+            />)}
           </ProtectedRoute>
         )
       },
@@ -115,11 +122,11 @@ export const router = createBrowserRouter([
         path: "admin/units",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage
+            {withSuspense(<AdminCollectionPage
               collectionKey="units"
               title="Units"
               description="Group lessons into teachable, trackable milestones."
-            />
+            />)}
           </ProtectedRoute>
         )
       },
@@ -127,11 +134,11 @@ export const router = createBrowserRouter([
         path: "admin/lessons",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage
+            {withSuspense(<AdminCollectionPage
               collectionKey="lessons"
               title="Lessons"
               description="Author reading, grammar, vocabulary, and practice loops."
-            />
+            />)}
           </ProtectedRoute>
         )
       },
@@ -139,11 +146,11 @@ export const router = createBrowserRouter([
         path: "admin/quizzes",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage
+            {withSuspense(<AdminCollectionPage
               collectionKey="quizzes"
               title="Quizzes"
               description="Define assessment rules, questions, and answer options."
-            />
+            />)}
           </ProtectedRoute>
         )
       },
@@ -151,11 +158,11 @@ export const router = createBrowserRouter([
         path: "admin/users",
         element: (
           <ProtectedRoute roles={["admin"]}>
-            <AdminCollectionPage
+            {withSuspense(<AdminCollectionPage
               collectionKey="users"
               title="Users"
               description="Review learner progress, access, and completion trends."
-            />
+            />)}
           </ProtectedRoute>
         )
       }

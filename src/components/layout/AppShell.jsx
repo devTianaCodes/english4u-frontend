@@ -27,6 +27,10 @@ export default function AppShell() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+
       <header className="topbar">
         <div className="topbar-branding">
           <NavLink className="brand" to="/">
@@ -88,7 +92,7 @@ export default function AppShell() {
         </div>
       </header>
 
-      <main className="page-frame">
+      <main className="page-frame page-enter" id="main-content" tabIndex="-1">
         <Outlet />
       </main>
     </div>

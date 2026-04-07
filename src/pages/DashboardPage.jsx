@@ -88,6 +88,30 @@ export default function DashboardPage() {
     }
   ];
 
+  if (!dashboard && !error) {
+    return (
+      <div className="stack-lg">
+        <div className="skeleton-card">
+          <div className="skeleton skeleton-title" />
+          <div className="skeleton skeleton-line" />
+          <div className="skeleton skeleton-line skeleton-line-short" />
+        </div>
+        <div className="grid grid-2">
+          <div className="skeleton-card">
+            <div className="skeleton skeleton-title" />
+            <div className="skeleton skeleton-line" />
+            <div className="skeleton skeleton-line" />
+          </div>
+          <div className="skeleton-card">
+            <div className="skeleton skeleton-title" />
+            <div className="skeleton skeleton-line" />
+            <div className="skeleton skeleton-line skeleton-line-short" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="stack-lg">
       <section className="dashboard-hero">

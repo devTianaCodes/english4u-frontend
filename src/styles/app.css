@@ -2,6 +2,22 @@
   min-height: 100vh;
 }
 
+.skip-link {
+  position: absolute;
+  top: -3rem;
+  left: 1rem;
+  z-index: 40;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: white;
+  font-weight: 700;
+}
+
+.skip-link:focus-visible {
+  top: 1rem;
+}
+
 .topbar {
   position: sticky;
   top: 1rem;
@@ -107,6 +123,7 @@
   background: rgba(255, 255, 255, 0.72);
   color: var(--color-text);
   font-weight: 700;
+  min-height: 2.9rem;
 }
 
 .session-pill {
@@ -1073,6 +1090,47 @@
   gap: 0.7rem;
 }
 
+.skeleton-card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.skeleton {
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(127, 140, 141, 0.12) 25%, rgba(127, 140, 141, 0.22) 50%, rgba(127, 140, 141, 0.12) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.6s infinite linear;
+}
+
+.skeleton-title {
+  width: min(16rem, 70%);
+  height: 1.2rem;
+}
+
+.skeleton-line {
+  width: 100%;
+  height: 0.9rem;
+}
+
+.skeleton-line-short {
+  width: min(12rem, 60%);
+}
+
+@keyframes skeleton-loading {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
 .weekly-study-graphic {
   margin-top: 0.25rem;
 }
@@ -1199,6 +1257,7 @@
 .button-ghost {
   padding: 0.8rem 1.15rem;
   font-weight: 700;
+  min-height: 2.95rem;
 }
 
 .button:disabled,
@@ -1242,6 +1301,22 @@
   transform: translateY(-1px);
 }
 
+.page-enter {
+  animation: fade-in-up 220ms ease;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .button:hover {
   box-shadow: 0 16px 32px rgba(0, 102, 204, 0.24);
 }
@@ -1253,6 +1328,12 @@
 .button-ghost:hover {
   color: var(--color-accent);
   background: rgba(0, 102, 204, 0.05);
+}
+
+.topbar :focus-visible,
+.page-frame :focus-visible {
+  outline: 3px solid rgba(0, 102, 204, 0.28);
+  outline-offset: 3px;
 }
 
 .form-grid {
@@ -1522,6 +1603,13 @@
     justify-content: center;
   }
 
+  .nav-link,
+  .button,
+  .button-ghost,
+  .theme-toggle {
+    min-height: 3rem;
+  }
+
   .filters-panel {
     position: static;
   }
@@ -1571,6 +1659,11 @@
     align-items: stretch;
   }
 
+  .topbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .catalog-stat-card,
   .dashboard-stat-card,
   .course-card,
@@ -1581,5 +1674,16 @@
   .course-section,
   .filters-panel {
     padding: 1.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -89,6 +89,18 @@ export default function CoursesPage() {
 
       {error ? <p className="form-error">{error}</p> : null}
 
+      {!error && courses.length === 0 ? (
+        <div className="grid grid-2">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="skeleton-card">
+              <div className="skeleton skeleton-title" />
+              <div className="skeleton skeleton-line" />
+              <div className="skeleton skeleton-line skeleton-line-short" />
+            </div>
+          ))}
+        </div>
+      ) : null}
+
       <section className="catalog-layout">
         <aside className="filters-panel">
           <div className="stack-sm">
