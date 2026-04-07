@@ -118,6 +118,30 @@ export default function ReviewPage() {
         ))}
       </section>
 
+      {(review?.grammarTopics ?? []).length ? (
+        <section className="review-grammar-strip">
+          <div className="dashboard-section-heading">
+            <div>
+              <p className="eyebrow">Grammar support</p>
+              <h2>Relevant guides for this review round</h2>
+            </div>
+            <p className="support-copy">Open the matching explanation before you retry the prompts.</p>
+          </div>
+          <div className="review-grammar-grid">
+            {review.grammarTopics.map((topic) => (
+              <article key={topic.id} className="section-card">
+                <p className="eyebrow">{topic.level}</p>
+                <h2>{topic.title}</h2>
+                <p>{topic.summary}</p>
+                <div className="section-card-footer">
+                  <Button to={`/grammar/${topic.id}`} variant="secondary">Open guide</Button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       {items.length === 0 ? (
         <section className="section-card">
           <p className="eyebrow">Nothing due</p>

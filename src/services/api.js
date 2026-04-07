@@ -37,6 +37,7 @@ export const endpoints = {
   profile: "/users/me",
   dashboard: "/dashboard/me",
   courses: "/courses",
+  grammarTopics: "/grammar-topics",
   review: "/review/me",
   studyPlan: "/study-plan/me"
 };

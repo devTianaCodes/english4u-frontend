@@ -112,6 +112,13 @@ export default function LessonPage() {
         <section className="lesson-info-block">
           <h2>Lesson resources</h2>
           <div className="resource-grid">
+            {lesson?.grammarTopic ? (
+              <Link className="resource-card resource-card-highlight" to={`/grammar/${lesson.grammarTopic.id}`}>
+                <p className="eyebrow">Grammar guide</p>
+                <strong>{lesson.grammarTopic.title}</strong>
+                <p>{lesson.grammarTopic.summary}</p>
+              </Link>
+            ) : null}
             {(lesson?.blocks ?? []).map((block) => (
               <article key={block.id} className="resource-card">
                 <p className="eyebrow">{block.type}</p>
@@ -241,6 +248,17 @@ export default function LessonPage() {
         </div>
 
         <aside className="lesson-sidebar">
+          {lesson?.grammarTopic ? (
+            <div className="lesson-sidebar-card">
+              <p className="eyebrow">Grammar focus</p>
+              <strong>{lesson.grammarTopic.title}</strong>
+              <p className="support-copy">{lesson.grammarTopic.summary}</p>
+              <Button to={`/grammar/${lesson.grammarTopic.id}`} variant="secondary">
+                Open grammar guide
+              </Button>
+            </div>
+          ) : null}
+
           <div className="lesson-sidebar-card">
             <h2>Lesson complete?</h2>
             <p>Save this lesson, update streak and completed totals, then move to the checkpoint.</p>

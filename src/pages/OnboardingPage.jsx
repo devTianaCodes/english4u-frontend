@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import SectionCard from "../components/layout/SectionCard.jsx";
+import Button from "../components/ui/Button.jsx";
 import { apiRequest } from "../services/api.js";
 
 const placementQuestions = [
@@ -51,6 +50,7 @@ export default function OnboardingPage() {
 
   const answeredCount = Object.keys(answers).length;
   const isComplete = answeredCount === placementQuestions.length;
+  const completionPercent = Math.round((answeredCount / placementQuestions.length) * 100);
 
   useEffect(() => {
     let isCancelled = false;
@@ -111,32 +111,49 @@ export default function OnboardingPage() {
 
   return (
     <div className="stack-lg">
-      <SectionCard
-        eyebrow="Onboarding"
-        title="Placement flow"
-        footer={
-          <button className="button" disabled={!isComplete || isSubmitting} onClick={handleSubmit} type="button">
-            {isSubmitting ? "Scoring your answers..." : "Get my level"}
-          </button>
-        }
-      >
-        <p>
-          The first release uses a compact placement test to recommend the right learning path before the learner sees
-          the dashboard.
-        </p>
-        {existingRecommendation?.hasCompletedPlacement ? (
-          <p className="support-copy">
-            Latest saved recommendation: {existingRecommendation.recommendedLevel}
-            {existingRecommendation.score !== null ? ` · score ${existingRecommendation.score}` : ""}
+      <section className="onboarding-hero">
+        <div className="onboarding-hero-copy">
+          <p className="eyebrow">Placement flow</p>
+          <h1>Find the right English path before you start</h1>
+          <p>
+            Answer four quick questions so English4U can recommend the right level, course track, and first study focus.
           </p>
-        ) : null}
-        <p className="support-copy">{answeredCount} of {placementQuestions.length} questions answered.</p>
-        {error ? <p className="form-error">{error}</p> : null}
-      </SectionCard>
+          <div className="progress-bar">
+            <div className="progress-bar-fill" style={{ width: `${completionPercent}%` }} />
+          </div>
+          <p className="support-copy">
+            {answeredCount} of {placementQuestions.length} answered · {completionPercent}% complete
+          </p>
+          <div className="button-row">
+            <Button disabled={!isComplete || isSubmitting} onClick={handleSubmit}>
+              {isSubmitting ? "Scoring your answers..." : "Get my level"}
+            </Button>
+            <Button to="/dashboard" variant="secondary">Skip to dashboard</Button>
+          </div>
+          {error ? <p className="form-error">{error}</p> : null}
+        </div>
 
-      <div className="grid grid-2">
+        <div className="onboarding-hero-side">
+          <div className="catalog-stat-card">
+            <strong>{existingRecommendation?.recommendedLevel ?? "A2"}</strong>
+            <span>latest recommendation</span>
+          </div>
+          <div className="catalog-stat-card">
+            <strong>{existingRecommendation?.score ?? "--"}</strong>
+            <span>latest score</span>
+          </div>
+          <div className="catalog-stat-card">
+            <strong>{existingRecommendation?.recommendedCourse?.title ?? "Guided path"}</strong>
+            <span>course track</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="onboarding-grid">
         {placementQuestions.map((question, index) => (
-          <SectionCard key={question.id} eyebrow={`Step 0${index + 1}`} title={question.label}>
+          <article key={question.id} className="section-card">
+            <p className="eyebrow">{`Step ${String(index + 1).padStart(2, "0")}`}</p>
+            <h2>{question.label}</h2>
             <div className="choice-list">
               {question.options.map((option) => (
                 <label key={option.value} className={`choice-card ${answers[question.id] === option.value ? "choice-card-active" : ""}`}>
@@ -151,28 +168,55 @@ export default function OnboardingPage() {
                 </label>
               ))}
             </div>
-          </SectionCard>
+          </article>
         ))}
-      </div>
+      </section>
 
       {result ? (
-        <SectionCard
-          eyebrow="Recommended path"
-          title={`Start at ${result.recommendedLevel}`}
-          footer={
-            <>
-              <Link className="button" to="/dashboard">
-                Go to dashboard
-              </Link>
-              <Link className="button button-ghost" to="/courses">
-                View courses
-              </Link>
-            </>
-          }
-        >
-          <p>Your placement score is {result.score}. Use this as a starting point and adjust later if the content feels too easy or too hard.</p>
-          <p>{result.recommendation.summary}</p>
-        </SectionCard>
+        <section className="onboarding-result">
+          <div className="onboarding-result-main">
+            <p className="eyebrow">Recommended path</p>
+            <h2>Start at {result.recommendedLevel}</h2>
+            <p>
+              Placement score: {result.score} · {result.confidenceLabel}
+            </p>
+            <p>{result.recommendation.summary}</p>
+            {result.recommendedCourse ? (
+              <div className="dashboard-focus-strip">
+                <span>Recommended course</span>
+                <strong>{result.recommendedCourse.title}</strong>
+                <p>{result.recommendedCourse.summary}</p>
+              </div>
+            ) : null}
+            <div className="section-card-footer">
+              <Button to="/dashboard">Go to dashboard</Button>
+              {result.recommendedCourse?.id ? (
+                <Button to={`/courses/${result.recommendedCourse.id}`} variant="secondary">
+                  Open recommended course
+                </Button>
+              ) : (
+                <Button to="/courses" variant="secondary">
+                  View courses
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="onboarding-result-side">
+            <p className="eyebrow">Focus next</p>
+            <div className="stack-sm">
+              {result.focusAreas.map((focus) => (
+                <div key={focus} className="achievement-card">
+                  <div className="achievement-icon">Fx</div>
+                  <div className="stack-sm">
+                    <strong>Priority</strong>
+                    <p>{focus}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       ) : null}
     </div>
   );
