@@ -10,6 +10,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const [formState, setFormState] = useState(preferences);
 
   useEffect(() => {
@@ -17,10 +18,16 @@ export default function ProfilePage() {
 
     async function loadProfile() {
       try {
-        const response = await apiRequest(endpoints.profile);
+        const [profileResponse, studyPlanResponse] = await Promise.all([
+          apiRequest(endpoints.profile),
+          apiRequest(endpoints.studyPlan)
+        ]);
 
         if (!isCancelled) {
-          setProfile(response?.profile ?? null);
+          setProfile(profileResponse?.profile ?? null);
+          const nextPreferences = studyPlanResponse?.studyPlan ?? preferences;
+          setPreferences(nextPreferences);
+          setFormState(nextPreferences);
         }
       } catch (loadError) {
         if (!isCancelled) {
@@ -34,7 +41,7 @@ export default function ProfilePage() {
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [setPreferences]);
 
   useEffect(() => {
     setFormState(preferences);
@@ -50,10 +57,27 @@ export default function ProfilePage() {
     setSaveMessage("");
   }
 
-  function handleSave(event) {
+  async function handleSave(event) {
     event.preventDefault();
-    setPreferences(formState);
-    setSaveMessage("Study preferences saved on this device.");
+    setSaveMessage("");
+    setError("");
+    setIsSaving(true);
+
+    try {
+      const response = await apiRequest(endpoints.studyPlan, {
+        method: "PUT",
+        body: JSON.stringify(formState)
+      });
+
+      const nextPreferences = response?.studyPlan ?? formState;
+      setPreferences(nextPreferences);
+      setFormState(nextPreferences);
+      setSaveMessage("Study preferences saved to your account.");
+    } catch (saveError) {
+      setError(saveError.message);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -81,8 +105,8 @@ export default function ProfilePage() {
         eyebrow="Study plan"
         title="Weekly learning preferences"
         footer={
-          <button className="button" form="study-plan-form" type="submit">
-            Save preferences
+          <button className="button" disabled={isSaving} form="study-plan-form" type="submit">
+            {isSaving ? "Saving..." : "Save preferences"}
           </button>
         }
       >

@@ -35,6 +35,8 @@ export default function DashboardPage() {
     };
   }, []);
 
+  const activePreferences = dashboard?.studyPlan ?? preferences;
+
   const continueCards = [
     {
       title: "Continue unit",
@@ -154,15 +156,15 @@ export default function DashboardPage() {
           <h2>Your weekly plan</h2>
           <div className="stat-row">
             <div className="stat-chip">
-              <strong>{preferences.sessionsPerWeek}</strong>
+              <strong>{activePreferences.sessionsPerWeek}</strong>
               <span>sessions / week</span>
             </div>
             <div className="stat-chip">
-              <strong>{preferences.minutesPerSession}</strong>
+              <strong>{activePreferences.minutesPerSession}</strong>
               <span>minutes / session</span>
             </div>
             <div className="stat-chip">
-              <strong>{preferences.sessionsPerWeek * preferences.minutesPerSession}</strong>
+              <strong>{activePreferences.sessionsPerWeek * activePreferences.minutesPerSession}</strong>
               <span>minutes / week</span>
             </div>
             <div className="stat-chip">
@@ -177,7 +179,7 @@ export default function DashboardPage() {
 
         <article className="section-card">
           <p className="eyebrow">Focus area</p>
-          <h2>{preferences.focus}</h2>
+          <h2>{activePreferences.focus}</h2>
           <p>
             Keep your weekly target realistic and tie it to one clear learning focus. Small consistency beats long,
             irregular sessions.
