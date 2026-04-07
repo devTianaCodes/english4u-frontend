@@ -24,7 +24,13 @@ const emptyLessonForm = {
   title: "",
   summary: "",
   duration: "12 min",
-  focus: "Core practice"
+  focus: "Core practice",
+  blocks: [
+    { type: "reading", title: "", content: "", accent: "" },
+    { type: "grammar", title: "", content: "", accent: "" },
+    { type: "vocabulary", title: "", content: "", accent: "" },
+    { type: "practice", title: "", content: "", accent: "" }
+  ]
 };
 
 function createEmptyQuizQuestions() {
@@ -59,7 +65,7 @@ function summarizeItem(collectionKey, item) {
   }
 
   if (collectionKey === "lessons") {
-    return `${item.courseTitle} · ${item.unitTitle} · ${item.duration} · ${item.focus}`;
+    return `${item.courseTitle} · ${item.unitTitle} · ${item.duration} · ${item.focus} · ${item.blocks?.length ?? 0} blocks`;
   }
 
   if (collectionKey === "quizzes") {
@@ -120,6 +126,30 @@ function buildQuizPayload(form) {
         { text: question.distractorTwo, isCorrect: false }
       ]
     }))
+  };
+}
+
+function buildLessonFormFromItem(item) {
+  return {
+    courseId: item?.courseId ?? "",
+    unitId: item?.unitId ?? "",
+    title: item?.title ?? "",
+    summary: item?.summary ?? "",
+    duration: item?.duration ?? "12 min",
+    focus: item?.focus ?? "Core practice",
+    blocks: Array.isArray(item?.blocks) && item.blocks.length > 0 ? item.blocks : emptyLessonForm.blocks
+  };
+}
+
+function buildLessonPayload(form) {
+  return {
+    courseId: form.courseId,
+    unitId: form.unitId,
+    title: form.title,
+    summary: form.summary,
+    duration: form.duration,
+    focus: form.focus,
+    blocks: form.blocks
   };
 }
 
@@ -303,6 +333,21 @@ export default function AdminCollectionPage({ collectionKey, title, description 
     setSaveMessage("");
   }
 
+  function handleLessonBlockChange(index, field, value) {
+    setLessonForm((current) => ({
+      ...current,
+      blocks: current.blocks.map((block, blockIndex) =>
+        blockIndex === index
+          ? {
+              ...block,
+              [field]: value
+            }
+          : block
+      )
+    }));
+    setSaveMessage("");
+  }
+
   function handleQuizChange(event) {
     const { name, value } = event.target;
 
@@ -371,14 +416,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
 
     if (supportsLessonCrud) {
       setEditingId(item.id);
-      setLessonForm({
-        courseId: item.courseId,
-        unitId: item.unitId,
-        title: item.title,
-        summary: item.summary ?? "",
-        duration: item.duration ?? "12 min",
-        focus: item.focus ?? "Core practice"
-      });
+      setLessonForm(buildLessonFormFromItem(item));
     }
 
     if (supportsQuizCrud) {
@@ -457,7 +495,7 @@ export default function AdminCollectionPage({ collectionKey, title, description 
         editingId ? `/admin/${collectionKey}/${editingId}` : `/admin/${collectionKey}`,
         {
           method: editingId ? "PUT" : "POST",
-          body: JSON.stringify(lessonForm)
+          body: JSON.stringify(buildLessonPayload(lessonForm))
         }
       );
 
@@ -719,6 +757,50 @@ export default function AdminCollectionPage({ collectionKey, title, description 
               Focus area
               <input name="focus" onChange={handleLessonChange} type="text" value={lessonForm.focus} />
             </label>
+            <div className="profile-field-span stack-sm">
+              <p className="eyebrow">Lesson blocks</p>
+              {lessonForm.blocks.map((block, index) => (
+                <div key={`lesson-block-${index}`} className="section-card section-card-default">
+                  <p className="eyebrow">{`Block ${String(index + 1).padStart(2, "0")}`}</p>
+                  <div className="form-grid">
+                    <label>
+                      Type
+                      <select onChange={(event) => handleLessonBlockChange(index, "type", event.target.value)} value={block.type}>
+                        <option value="reading">Reading</option>
+                        <option value="grammar">Grammar</option>
+                        <option value="vocabulary">Vocabulary</option>
+                        <option value="practice">Practice</option>
+                        <option value="listening">Listening</option>
+                      </select>
+                    </label>
+                    <label>
+                      Block title
+                      <input
+                        onChange={(event) => handleLessonBlockChange(index, "title", event.target.value)}
+                        type="text"
+                        value={block.title}
+                      />
+                    </label>
+                    <label>
+                      Main content
+                      <input
+                        onChange={(event) => handleLessonBlockChange(index, "content", event.target.value)}
+                        type="text"
+                        value={block.content}
+                      />
+                    </label>
+                    <label>
+                      Accent note
+                      <input
+                        onChange={(event) => handleLessonBlockChange(index, "accent", event.target.value)}
+                        type="text"
+                        value={block.accent}
+                      />
+                    </label>
+                  </div>
+                </div>
+              ))}
+            </div>
             {filteredUnitOptions.length === 0 ? (
               <p className="form-error form-error-span">Create a unit first before adding lessons to this course.</p>
             ) : null}
