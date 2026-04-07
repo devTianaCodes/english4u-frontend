@@ -10,6 +10,7 @@ export default function Button({
   children,
   className = "",
   disabled = false,
+  form,
   onClick,
   size = "md",
   to,
@@ -27,7 +28,7 @@ export default function Button({
   }
 
   return (
-    <button className={resolvedClassName} disabled={disabled} onClick={onClick} type={type}>
+    <button className={resolvedClassName} disabled={disabled} form={form} onClick={onClick} type={type}>
       {children}
     </button>
   );

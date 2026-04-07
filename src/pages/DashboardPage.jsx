@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import SectionCard from "../components/layout/SectionCard.jsx";
-import ProgressRing from "../components/ui/ProgressRing.jsx";
+import Button from "../components/ui/Button.jsx";
 import WeeklyStudyGraphic from "../components/ui/WeeklyStudyGraphic.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
 import { useStudyPreferences } from "../features/progress/useStudyPreferences.js";
@@ -43,58 +41,69 @@ export default function DashboardPage() {
       text: dashboard?.nextLesson
         ? `${dashboard.nextLesson.unitTitle} · ${dashboard.nextLesson.title}`
         : `${dashboard?.currentCourse ?? "Your current course"} is ready for the next lesson.`,
-      to: dashboard?.nextLesson ? `/lessons/${dashboard.nextLesson.id}` : "/courses"
+      to: dashboard?.nextLesson ? `/lessons/${dashboard.nextLesson.id}` : "/courses",
+      progress: Math.min(dashboard?.completedLessons ? dashboard.completedLessons * 5 : 18, 100)
     },
     {
       title: "Review vocabulary",
       text: "Use short review loops to reinforce the words you met in recent lessons.",
-      to: "/courses"
+      to: "/courses",
+      progress: 54
     },
     {
       title: "Take quiz",
       text: dashboard?.nextLesson
         ? `Checkpoint for ${dashboard.nextLesson.title} is ready when you finish the lesson.`
         : "Finish the current lesson to unlock the next checkpoint.",
-      to: dashboard?.nextLesson ? `/quizzes/${dashboard.nextLesson.quizId}` : "/courses"
+      to: dashboard?.nextLesson ? `/quizzes/${dashboard.nextLesson.quizId}` : "/courses",
+      progress: dashboard?.quizAverage ?? 0
     }
+  ];
+
+  const statCards = [
+    { label: "Current level", value: dashboard?.currentLevel ?? "A1", note: "active path" },
+    { label: "Lessons done", value: dashboard?.completedLessons ?? 0, note: "completed" },
+    { label: "Streak", value: `${dashboard?.streak ?? 0} days`, note: "consistency" },
+    { label: "Quiz average", value: `${dashboard?.quizAverage ?? 0}%`, note: "latest score" }
   ];
 
   return (
     <div className="stack-lg">
-      <section className="dashboard-grid">
-        <SectionCard eyebrow="Welcome back" title="Your learning dashboard">
+      <section className="dashboard-hero">
+        <div className="dashboard-hero-copy">
+          <p className="eyebrow">Welcome back</p>
+          <h1>Your learning dashboard</h1>
           <p>
             {dashboard
               ? `Welcome ${dashboard.learner.name}. Keep the next action obvious and continue your ${dashboard.currentLevel} path.`
               : `Welcome ${user?.firstName ?? "back"}. Keep the next action obvious and continue your current learning path.`}
           </p>
-          {dashboard ? (
-            <p className="support-copy">
-              Current streak: {dashboard.streak} days · Completed lessons: {dashboard.completedLessons} · Current course:{" "}
-              {dashboard.currentCourse}
-            </p>
-          ) : null}
+          <div className="button-row">
+            <Button to={dashboard?.nextLesson ? `/lessons/${dashboard.nextLesson.id}` : "/courses"}>Continue learning</Button>
+            <Button to="/courses" variant="secondary">Browse courses</Button>
+          </div>
           {error ? <p className="form-error">{error}</p> : null}
-        </SectionCard>
-        <SectionCard eyebrow="Progress" title="This week">
-          <div className="ring-row">
-            <ProgressRing value={dashboard ? Math.min(dashboard.completedLessons * 5, 100) : 0} label="Course progress" />
-            <ProgressRing value={dashboard?.quizAverage ?? 0} label="Quiz average" />
+        </div>
+
+        <div className="dashboard-hero-panel">
+          <p className="metric-label">This week</p>
+          <div className="dashboard-stats-grid">
+            {statCards.map((card) => (
+              <div key={card.label} className="dashboard-stat-card">
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <p>{card.note}</p>
+              </div>
+            ))}
           </div>
           <WeeklyStudyGraphic />
-        </SectionCard>
+        </div>
       </section>
 
-      <section className="grid grid-2">
-        <SectionCard
-          eyebrow="Study rhythm"
-          title="Your weekly plan"
-          footer={
-            <Link className="button button-ghost" to="/profile">
-              Edit plan
-            </Link>
-          }
-        >
+      <section className="dashboard-grid">
+        <article className="section-card section-card-featured">
+          <p className="eyebrow">Study rhythm</p>
+          <h2>Your weekly plan</h2>
           <div className="stat-row">
             <div className="stat-chip">
               <strong>{preferences.sessionsPerWeek}</strong>
@@ -109,32 +118,51 @@ export default function DashboardPage() {
               <span>minutes / week</span>
             </div>
           </div>
-        </SectionCard>
+          <div className="section-card-footer">
+            <Button to="/profile" variant="secondary">Edit plan</Button>
+          </div>
+        </article>
 
-        <SectionCard eyebrow="Focus area" title={preferences.focus}>
+        <article className="section-card">
+          <p className="eyebrow">Focus area</p>
+          <h2>{preferences.focus}</h2>
           <p>
             Keep your weekly target realistic and tie it to one clear learning focus. Small consistency beats long,
             irregular sessions.
           </p>
-        </SectionCard>
+          <div className="dashboard-focus-strip">
+            <span>Current course</span>
+            <strong>{dashboard?.currentCourse ?? "Guided learner path"}</strong>
+          </div>
+        </article>
       </section>
 
-      <div className="grid grid-3">
+      <section className="stack-sm">
+        <div className="dashboard-section-heading">
+          <div>
+            <p className="eyebrow">Continue learning</p>
+            <h2>Next actions</h2>
+          </div>
+          <p className="support-copy">Short, focused actions keep the path feeling clear and professional.</p>
+        </div>
+
+        <div className="dashboard-progress-list">
         {continueCards.map((card) => (
-          <SectionCard
-            key={card.title}
-            eyebrow="Continue learning"
-            title={card.title}
-            footer={
-              <Link className="button button-ghost" to={card.to}>
-                Open
-              </Link>
-            }
-          >
-            <p>{card.text}</p>
-          </SectionCard>
+          <article key={card.title} className="course-progress-card">
+            <div className="course-progress-copy">
+              <p className="eyebrow">Continue learning</p>
+              <h3>{card.title}</h3>
+              <p>{card.text}</p>
+              <div className="progress-bar">
+                <div className="progress-bar-fill" style={{ width: `${card.progress}%` }} />
+              </div>
+              <p className="support-copy">{card.progress}% ready</p>
+            </div>
+            <Button to={card.to} variant="secondary">Open</Button>
+          </article>
         ))}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

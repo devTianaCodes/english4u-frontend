@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import SectionCard from "../components/layout/SectionCard.jsx";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import AuthSplitLayout from "../components/layout/AuthSplitLayout.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
 
 export default function LoginPage() {
@@ -38,15 +38,31 @@ export default function LoginPage() {
   }
 
   return (
-    <SectionCard
+    <AuthSplitLayout
       eyebrow="Access"
-      title="Welcome back"
-      footer={
-        <button className="button" disabled={isSubmitting} form="login-form" type="submit">
-          {isSubmitting ? "Logging in..." : "Log in"}
-        </button>
-      }
+      formId="login-form"
+      highlights={[
+        {
+          label: "Guided path",
+          value: "Placement first",
+          text: "Resume from the right lesson instead of searching the catalog manually."
+        },
+        {
+          label: "Visible progress",
+          value: "Dashboard ready",
+          text: "Track streak, study plan, checkpoint results, and next lesson in one place."
+        }
+      ]}
+      isSubmitting={isSubmitting}
+      submitLabel={isSubmitting ? "Logging in..." : "Log in"}
+      text="Return to a clear learning dashboard with structured units, focused lessons, and visible weekly momentum."
+      title="Welcome back to English4U"
     >
+      <div className="stack-sm">
+        <h2>Sign in</h2>
+        <p className="support-copy">Use your learner or admin account to access your current path.</p>
+      </div>
+
       <form className="form-grid" id="login-form" onSubmit={handleSubmit}>
         <label>
           Email
@@ -58,6 +74,10 @@ export default function LoginPage() {
         </label>
         {error ? <p className="form-error">{error}</p> : null}
       </form>
-    </SectionCard>
+
+      <p className="support-copy">
+        New here? <Link className="inline-link" to="/register">Create an account</Link>
+      </p>
+    </AuthSplitLayout>
   );
 }

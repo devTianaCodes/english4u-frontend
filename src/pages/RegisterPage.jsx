@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import SectionCard from "../components/layout/SectionCard.jsx";
+import { Link, useNavigate } from "react-router-dom";
+import AuthSplitLayout from "../components/layout/AuthSplitLayout.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
 
 export default function RegisterPage() {
@@ -39,15 +39,31 @@ export default function RegisterPage() {
   }
 
   return (
-    <SectionCard
+    <AuthSplitLayout
       eyebrow="Create account"
-      title="Start your English path"
-      footer={
-        <button className="button" disabled={isSubmitting} form="register-form" type="submit">
-          {isSubmitting ? "Creating account..." : "Create account"}
-        </button>
-      }
+      formId="register-form"
+      highlights={[
+        {
+          label: "Placement test",
+          value: "15 minutes",
+          text: "Start with a quick level check and enter the right course without guessing."
+        },
+        {
+          label: "Structured course",
+          value: "Short units",
+          text: "Build confidence with guided lessons, checkpoint quizzes, and visible next steps."
+        }
+      ]}
+      isSubmitting={isSubmitting}
+      submitLabel={isSubmitting ? "Creating account..." : "Create account"}
+      text="Set up your profile, unlock your first placement path, and start a cleaner English-learning routine."
+      title="Create your English4U account"
     >
+      <div className="stack-sm">
+        <h2>Start your English path</h2>
+        <p className="support-copy">Create a learner account and continue directly to onboarding.</p>
+      </div>
+
       <form className="form-grid form-grid-double" id="register-form" onSubmit={handleSubmit}>
         <label>
           First name
@@ -67,6 +83,10 @@ export default function RegisterPage() {
         </label>
         {error ? <p className="form-error form-error-span">{error}</p> : null}
       </form>
-    </SectionCard>
+
+      <p className="support-copy">
+        Already registered? <Link className="inline-link" to="/login">Sign in</Link>
+      </p>
+    </AuthSplitLayout>
   );
 }
