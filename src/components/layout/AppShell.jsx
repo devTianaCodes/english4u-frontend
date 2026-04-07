@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthProvider.jsx";
+import Button from "../ui/Button.jsx";
 
 const learnerLinks = [
   { to: "/dashboard", label: "Dashboard" },
@@ -25,25 +26,32 @@ export default function AppShell() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <NavLink className="brand" to="/">
-          <span className="brand-mark">E4U</span>
-          <span>English4U</span>
-        </NavLink>
+        <div className="topbar-branding">
+          <NavLink className="brand" to="/">
+            <span className="brand-mark">E4U</span>
+            <span className="brand-copy">
+              <strong>English4U</strong>
+              <small>Professional English paths</small>
+            </span>
+          </NavLink>
+        </div>
 
-        <nav className="nav">
-          {learnerLinks.map((link) => (
-            <NavLink key={link.to} className="nav-link" to={link.to}>
-              {link.label}
-            </NavLink>
-          ))}
-          {user?.role === "admin"
-            ? adminLinks.map((link) => (
-                <NavLink key={link.to} className="nav-link nav-link-muted" to={link.to}>
-                  {link.label}
-                </NavLink>
-              ))
-            : null}
-        </nav>
+        <div className="topbar-center">
+          <nav aria-label="Primary navigation" className="nav">
+            {learnerLinks.map((link) => (
+              <NavLink key={link.to} className="nav-link" to={link.to}>
+                {link.label}
+              </NavLink>
+            ))}
+            {user?.role === "admin"
+              ? adminLinks.map((link) => (
+                  <NavLink key={link.to} className="nav-link nav-link-muted" to={link.to}>
+                    {link.label}
+                  </NavLink>
+                ))
+              : null}
+          </nav>
+        </div>
 
         <div className="topbar-actions">
           {isLoading ? (
@@ -53,18 +61,18 @@ export default function AppShell() {
               <span className="session-pill">
                 {user.firstName} {user.lastName} · {user.role}
               </span>
-              <button className="button button-ghost" onClick={handleLogout} type="button">
+              <Button onClick={handleLogout} variant="ghost">
                 Log out
-              </button>
+              </Button>
             </>
           ) : (
             <>
-              <NavLink className="button button-ghost" to="/login">
-                Log in
-              </NavLink>
-              <NavLink className="button" to="/register">
+              <Button to="/login" variant="ghost">
+                Sign in
+              </Button>
+              <Button to="/register">
                 Get started
-              </NavLink>
+              </Button>
             </>
           )}
         </div>

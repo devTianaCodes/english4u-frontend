@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
 import SectionCard from "../components/layout/SectionCard.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
+import Button from "../components/ui/Button.jsx";
+import CoursePathGraphic from "../components/ui/CoursePathGraphic.jsx";
 
 const pillars = [
   {
@@ -17,6 +18,27 @@ const pillars = [
   }
 ];
 
+const actionZones = [
+  {
+    eyebrow: "Placement test",
+    title: "Take a fast level check",
+    text: "Start with a guided diagnostic instead of browsing blindly through the catalog.",
+    to: "/onboarding"
+  },
+  {
+    eyebrow: "Dashboard",
+    title: "Track visible progress",
+    text: "Keep weekly focus, streak, and next lesson in one professional learner space.",
+    to: "/dashboard"
+  },
+  {
+    eyebrow: "Admin CMS",
+    title: "Manage course content",
+    text: "Author structured learning paths, lessons, and quizzes from the integrated CMS.",
+    to: "/admin"
+  }
+];
+
 export default function LandingPage() {
   const { user } = useAuth();
 
@@ -24,41 +46,29 @@ export default function LandingPage() {
     <div className="stack-xl">
       <section className="hero">
         <div className="hero-copy">
-          <p className="eyebrow">Portfolio-ready English LMS</p>
-          <h1>Learn English with a path that feels structured, focused, and achievable.</h1>
+          <p className="eyebrow">Professional English learning platform</p>
+          <h1>Master English. Transform your future.</h1>
           <p className="hero-text">
-            English4U is designed as a modern self-paced platform with placement, guided lessons, and an admin-managed
-            curriculum.
+            English4U combines guided placement, structured lessons, and visible progress so learners always know their
+            next step.
           </p>
+          <div className="hero-meta">
+            <span>Guided courses</span>
+            <span>Real progress</span>
+            <span>Admin-managed curriculum</span>
+          </div>
           <div className="button-row">
-            <Link className="button" to={user ? "/dashboard" : "/register"}>
-              {user ? "Open dashboard" : "Start learning"}
-            </Link>
-            <Link className="button button-ghost" to="/admin">
-              View admin area
-            </Link>
+            <Button size="lg" to={user ? "/dashboard" : "/register"}>
+              {user ? "Open dashboard" : "Start your journey"}
+            </Button>
+            <Button size="lg" to={user ? "/onboarding" : "/register"} variant="secondary">
+              Take free level test
+            </Button>
           </div>
         </div>
 
         <div className="hero-panel">
-          <div className="hero-grid">
-            <div>
-              <span className="metric-label">Current track</span>
-              <strong>A2 Everyday English</strong>
-            </div>
-            <div>
-              <span className="metric-label">Next lesson</span>
-              <strong>Talking about routines</strong>
-            </div>
-            <div>
-              <span className="metric-label">Streak</span>
-              <strong>12 days</strong>
-            </div>
-            <div>
-              <span className="metric-label">Quiz average</span>
-              <strong>86%</strong>
-            </div>
-          </div>
+          <CoursePathGraphic />
         </div>
       </section>
 
@@ -66,6 +76,24 @@ export default function LandingPage() {
         {pillars.map((pillar) => (
           <SectionCard key={pillar.title} eyebrow="Core principle" title={pillar.title}>
             <p>{pillar.text}</p>
+          </SectionCard>
+        ))}
+      </section>
+
+      <section className="grid grid-3">
+        {actionZones.map((zone) => (
+          <SectionCard
+            key={zone.title}
+            eyebrow={zone.eyebrow}
+            footer={
+              <Button to={zone.to} variant="secondary">
+                Open
+              </Button>
+            }
+            title={zone.title}
+            tone="featured"
+          >
+            <p>{zone.text}</p>
           </SectionCard>
         ))}
       </section>

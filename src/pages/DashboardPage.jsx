@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SectionCard from "../components/layout/SectionCard.jsx";
 import ProgressRing from "../components/ui/ProgressRing.jsx";
+import WeeklyStudyGraphic from "../components/ui/WeeklyStudyGraphic.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
 import { useStudyPreferences } from "../features/progress/useStudyPreferences.js";
 import { apiRequest, endpoints } from "../services/api.js";
@@ -80,6 +81,7 @@ export default function DashboardPage() {
             <ProgressRing value={dashboard ? Math.min(dashboard.completedLessons * 5, 100) : 0} label="Course progress" />
             <ProgressRing value={dashboard?.quizAverage ?? 0} label="Quiz average" />
           </div>
+          <WeeklyStudyGraphic />
         </SectionCard>
       </section>
 
