@@ -3,39 +3,57 @@ import { useAuth } from "../features/auth/AuthProvider.jsx";
 import Button from "../components/ui/Button.jsx";
 import CoursePathGraphic from "../components/ui/CoursePathGraphic.jsx";
 
-const pillars = [
+const experienceTracks = [
   {
-    title: "Placement-led onboarding",
-    text: "Start learners at the right level with a quick diagnostic path instead of a generic catalog dump."
+    eyebrow: "Everyday English",
+    title: "Build routine confidence",
+    text: "Short guided lessons for introductions, daily life, travel, and simple conversations.",
+    cta: "/courses"
   },
   {
-    title: "Short lesson loops",
-    text: "Break learning into grammar, vocabulary, and reading blocks that are easy to complete consistently."
+    eyebrow: "Work and study",
+    title: "Learn with practical outcomes",
+    text: "Weekly plans, review loops, and checkpoint quizzes that keep English useful for real schedules.",
+    cta: "/study-plan"
   },
   {
-    title: "Progress visibility",
-    text: "Surface streaks, unit completion, and quiz feedback so learners always know what to do next."
+    eyebrow: "Certificate readiness",
+    title: "Track milestone progress",
+    text: "Use placement, streaks, and quiz performance to see when your path is ready for a stronger certificate story.",
+    cta: "/certificates"
   }
 ];
 
-const actionZones = [
+const formats = [
   {
-    eyebrow: "Placement test",
-    title: "Take a fast level check",
-    text: "Start with a guided diagnostic instead of browsing blindly through the catalog.",
-    to: "/onboarding"
+    title: "Adaptive level test",
+    text: "Start with a guided online check so the platform recommends the right level instead of a random first course."
   },
   {
-    eyebrow: "Dashboard",
-    title: "Track visible progress",
-    text: "Keep weekly focus, streak, and next lesson in one professional learner space.",
-    to: "/dashboard"
+    title: "Structured self-paced paths",
+    text: "Move through units, checkpoints, grammar support, and review lanes with a clear next action."
   },
   {
-    eyebrow: "Admin CMS",
-    title: "Manage course content",
-    text: "Author structured learning paths, lessons, and quizzes from the integrated CMS.",
-    to: "/admin"
+    title: "Progress with purpose",
+    text: "Study plans, coach recommendations, and certificate signals turn practice into something more professional."
+  }
+];
+
+const journalEntries = [
+  {
+    title: "How to study English in 20 minutes a day",
+    text: "A simple weekly rhythm for learners who want consistency without long study blocks.",
+    tag: "Study habits"
+  },
+  {
+    title: "A1 to A2: what should feel easier next",
+    text: "Use placement and checkpoints to see which skills are actually improving.",
+    tag: "Level guide"
+  },
+  {
+    title: "When to review grammar and when to keep moving",
+    text: "Use review lanes without getting stuck in correction-only mode.",
+    tag: "Grammar support"
   }
 ];
 
@@ -54,8 +72,8 @@ export default function LandingPage() {
           </p>
           <div className="hero-meta">
             <span>Guided courses</span>
-            <span>Real progress</span>
-            <span>Admin-managed curriculum</span>
+            <span>Placement-first</span>
+            <span>Certificate-ready rhythm</span>
           </div>
           <div className="button-row">
             <Button size="lg" to={user ? "/dashboard" : "/register"}>
@@ -72,30 +90,95 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <section className="test-drive-banner">
+        <div className="test-drive-copy">
+          <p className="eyebrow">Online placement test</p>
+          <h2>Start with the right level, not the wrong course.</h2>
+          <p>
+            Inspired by stronger online-school onboarding flows, E4U now pushes the level check to the front so the
+            learner sees a guided path immediately.
+          </p>
+        </div>
+        <div className="test-drive-actions">
+          <div className="test-drive-metric">
+            <strong>15 min</strong>
+            <span>guided diagnostic</span>
+          </div>
+          <div className="test-drive-metric">
+            <strong>A1-A2</strong>
+            <span>current course range</span>
+          </div>
+          <Button to={user ? "/onboarding" : "/register"}>Open test</Button>
+        </div>
+      </section>
+
       <section className="grid grid-3">
-        {pillars.map((pillar) => (
-          <SectionCard key={pillar.title} eyebrow="Core principle" title={pillar.title}>
-            <p>{pillar.text}</p>
+        {experienceTracks.map((track) => (
+          <SectionCard
+            key={track.title}
+            eyebrow={track.eyebrow}
+            footer={<Button to={track.cta} variant="secondary">Explore</Button>}
+            title={track.title}
+            tone="featured"
+          >
+            <p>{track.text}</p>
           </SectionCard>
         ))}
       </section>
 
+      <section className="journey-split">
+        <article className="journey-panel journey-panel-here">
+          <p className="eyebrow">Here</p>
+          <h2>Keep learning inside your weekly routine</h2>
+          <p>
+            Use short sessions, review lanes, and coach guidance to keep English moving even on busy weeks.
+          </p>
+          <ul className="journey-list">
+            <li>Study plan with realistic weekly targets</li>
+            <li>Warm-up, grammar, and vocabulary review modes</li>
+            <li>Dashboard recommendations tied to your pace</li>
+          </ul>
+        </article>
+
+        <article className="journey-panel journey-panel-there">
+          <p className="eyebrow">There</p>
+          <h2>Turn progress into stronger outcomes</h2>
+          <p>
+            Build toward clearer checkpoint performance, certificate readiness, and a more professional English story.
+          </p>
+          <ul className="journey-list">
+            <li>Placement trend and checkpoint visibility</li>
+            <li>Certificate milestone tracking</li>
+            <li>Course paths that feel like a real academy structure</li>
+          </ul>
+        </article>
+      </section>
+
       <section className="grid grid-3">
-        {actionZones.map((zone) => (
-          <SectionCard
-            key={zone.title}
-            eyebrow={zone.eyebrow}
-            footer={
-              <Button to={zone.to} variant="secondary">
-                Open
-              </Button>
-            }
-            title={zone.title}
-            tone="featured"
-          >
-            <p>{zone.text}</p>
+        {formats.map((format) => (
+          <SectionCard key={format.title} eyebrow="Learning format" title={format.title}>
+            <p>{format.text}</p>
           </SectionCard>
         ))}
+      </section>
+
+      <section className="journal-teaser">
+        <div className="dashboard-section-heading">
+          <div>
+            <p className="eyebrow">Learning journal</p>
+            <h2>News, tips, and study guidance</h2>
+          </div>
+          <Button to="/journal" variant="secondary">Open journal</Button>
+        </div>
+        <div className="grid grid-3">
+          {journalEntries.map((entry) => (
+            <article key={entry.title} className="journal-card">
+              <span className="course-card-level">{entry.tag}</span>
+              <h3>{entry.title}</h3>
+              <p>{entry.text}</p>
+            </article>
+          ))}
+        </div>
       </section>
     </div>
   );

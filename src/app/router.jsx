@@ -12,6 +12,7 @@ const CoursesPage = lazy(() => import("../pages/CoursesPage.jsx"));
 const CertificatesPage = lazy(() => import("../pages/CertificatesPage.jsx"));
 const DashboardPage = lazy(() => import("../pages/DashboardPage.jsx"));
 const GrammarPage = lazy(() => import("../pages/GrammarPage.jsx"));
+const JournalPage = lazy(() => import("../pages/JournalPage.jsx"));
 const LandingPage = lazy(() => import("../pages/LandingPage.jsx"));
 const LessonPage = lazy(() => import("../pages/LessonPage.jsx"));
 const LoginPage = lazy(() => import("../pages/LoginPage.jsx"));
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
             {withSuspense(<OnboardingPage />)}
           </ProtectedRoute>
         )
+      },
+      {
+        path: "journal",
+        element: withSuspense(<JournalPage />)
       },
       {
         path: "grammar",

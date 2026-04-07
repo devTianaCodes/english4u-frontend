@@ -35,6 +35,21 @@ function buildCertificates(dashboard) {
   ];
 }
 
+const pathways = [
+  {
+    title: "Path completion signal",
+    text: "Use completed lessons and active-unit progress to show that your study path is structured, not random."
+  },
+  {
+    title: "Checkpoint confidence",
+    text: "Keep quiz results stable before pushing toward stronger certificate goals or level movement."
+  },
+  {
+    title: "Consistency before exam stress",
+    text: "A steady weekly rhythm is a better predictor than last-minute intensive practice."
+  }
+];
+
 export default function CertificatesPage() {
   const [dashboard, setDashboard] = useState(null);
   const [error, setError] = useState("");
@@ -69,12 +84,22 @@ export default function CertificatesPage() {
     <div className="stack-lg">
       <section className="section-card section-card-featured">
         <p className="eyebrow">Certificates</p>
-        <h1>Milestones and certificate readiness</h1>
+        <h1>Milestones, readiness, and certificate direction</h1>
         <p>
           English4U uses simple certificate-style milestones to show when a learner has enough path momentum,
           checkpoint accuracy, and consistency to present progress confidently.
         </p>
         {error ? <p className="form-error">{error}</p> : null}
+      </section>
+
+      <section className="grid grid-3">
+        {pathways.map((pathway) => (
+          <article key={pathway.title} className="section-card">
+            <p className="eyebrow">Readiness layer</p>
+            <h2>{pathway.title}</h2>
+            <p>{pathway.text}</p>
+          </article>
+        ))}
       </section>
 
       <section className="dashboard-grid">
@@ -88,11 +113,11 @@ export default function CertificatesPage() {
       </section>
 
       <section className="section-card">
-        <p className="eyebrow">Next milestone</p>
-        <h2>Keep the path moving</h2>
+        <p className="eyebrow">Certificate story</p>
+        <h2>Keep the path moving before you chase formal proof</h2>
         <p>
-          Certificates stay lightweight in this product. The real signal is steady lesson completion, review retention,
-          and strong checkpoint results.
+          Certificates stay lightweight in this product. The stronger signal comes first: steady lesson completion,
+          review retention, strong checkpoint results, and a level path that makes sense.
         </p>
         <div className="section-card-footer">
           <Button to="/dashboard">Back to dashboard</Button>
