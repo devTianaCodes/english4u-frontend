@@ -312,7 +312,143 @@
 
 .page-frame {
   width: min(calc(100% - 2rem), var(--content-width));
-  margin: 1.25rem auto 3rem;
+  margin: 1.25rem auto 4.5rem;
+}
+
+.site-footer {
+  width: 100%;
+  margin-top: 1.75rem;
+  padding: 2.2rem 0 1.4rem;
+  border-top: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-surface-soft) 0%, var(--color-surface) 100%);
+}
+
+.site-footer-shell {
+  width: min(calc(100% - 2rem), var(--content-width));
+  margin: 0 auto;
+  padding: 0 0 0.25rem;
+}
+
+.site-footer-main {
+  display: grid;
+  grid-template-columns: 1.3fr 0.8fr 0.9fr;
+  align-items: start;
+  gap: 2rem;
+}
+
+.footer-brand-block,
+.footer-link-group,
+.footer-social-block {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: fit-content;
+}
+
+.footer-brand-copy {
+  gap: 0.16rem;
+}
+
+.footer-brand-copy strong {
+  font-size: 1.22rem;
+  line-height: 1;
+}
+
+.footer-brand-copy small {
+  max-width: 19rem;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.footer-brand-mark {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 0.96rem;
+}
+
+.footer-label {
+  margin: 0;
+  color: #1db8c8;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.footer-contact-block,
+.footer-link-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.footer-contact-link,
+.footer-link {
+  color: var(--color-text);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.footer-contact-link:hover,
+.footer-link:hover,
+.footer-contact-link:focus-visible,
+.footer-link:focus-visible {
+  color: var(--color-accent);
+}
+
+.footer-social-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.footer-social-link {
+  width: 2.55rem;
+  height: 2.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.footer-social-link:hover,
+.footer-social-link:focus-visible {
+  border-color: rgba(20, 153, 184, 0.28);
+  color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.footer-social-link svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.site-footer-meta {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.site-footer-meta p {
+  margin: 0;
 }
 
 .center-panel {
@@ -2005,6 +2141,18 @@
   background: rgba(10, 4, 21, 0.94);
 }
 
+:root[data-theme="dark"] .site-footer-shell {
+  background: transparent;
+  border-color: transparent;
+}
+
+:root[data-theme="dark"] .site-footer {
+  border-top-color: rgba(112, 104, 164, 0.22);
+  background:
+    linear-gradient(180deg, rgba(14, 7, 28, 0.92), rgba(23, 11, 43, 0.88)),
+    var(--color-surface);
+}
+
 :root[data-theme="dark"] .hero-copy,
 :root[data-theme="dark"] .hero-panel,
 :root[data-theme="dark"] .section-card,
@@ -2143,12 +2291,15 @@
 :root[data-theme="dark"] .account-menu-header span,
 :root[data-theme="dark"] .topbar-drawer-label,
 :root[data-theme="dark"] .topbar-drawer-user span,
+:root[data-theme="dark"] .site-footer-meta,
+:root[data-theme="dark"] .footer-brand-copy small,
 :root[data-theme="dark"] .dashboard-sidebar-link small {
   color: var(--color-text-muted);
 }
 
 :root[data-theme="dark"] .dashboard-sidebar-link span,
 :root[data-theme="dark"] .brand-copy strong,
+:root[data-theme="dark"] .footer-brand-copy strong,
 :root[data-theme="dark"] .test-drive-metric strong,
 :root[data-theme="dark"] .weekly-study-overlay strong,
 :root[data-theme="dark"] .course-path-header strong,
@@ -2553,6 +2704,7 @@
   .hero,
   .test-drive-banner,
   .journey-split,
+  .site-footer-main,
   .catalog-hero,
   .dashboard-hero,
   .course-detail-hero,
@@ -2700,6 +2852,11 @@
     width: min(calc(100% - 1rem), var(--content-width));
   }
 
+  .site-footer-shell {
+    width: min(calc(100% - 1rem), var(--content-width));
+    padding: 0 0 0.2rem;
+  }
+
   .topbar {
     width: min(calc(100% - 1rem), var(--content-width));
     padding: 0.8rem 0.85rem;
@@ -2773,6 +2930,17 @@
   .course-section,
   .filters-panel {
     padding: 1.2rem;
+  }
+
+  .site-footer-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-social-row {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
   }
 }
 

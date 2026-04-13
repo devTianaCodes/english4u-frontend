@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthProvider.jsx";
 import { useTheme } from "../../features/theme/useTheme.js";
 import Button from "../ui/Button.jsx";
+import SiteFooter from "./SiteFooter.jsx";
 
 const guestLinks = [
   { to: "/courses", label: "Courses" },
@@ -309,6 +310,8 @@ export default function AppShell() {
       <main className="page-frame page-enter" id="main-content" tabIndex="-1">
         <Outlet />
       </main>
+
+      <SiteFooter />
     </div>
   );
 }
