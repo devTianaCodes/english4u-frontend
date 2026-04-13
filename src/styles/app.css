@@ -988,6 +988,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .course-instructor-avatar {
@@ -2699,6 +2700,20 @@
     padding: 0.8rem 0.85rem;
   }
 
+  .topbar-actions {
+    gap: 0.25rem;
+  }
+
+  .topbar-icon-button {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  .account-menu {
+    width: min(calc(100vw - 1rem), 18rem);
+    right: -0.15rem;
+  }
+
   .hero-copy,
   .hero-panel,
   .section-card {
@@ -2709,6 +2724,26 @@
   .ring-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .section-card-footer,
+  .dashboard-section-heading,
+  .course-instructor-card,
+  .course-review-top,
+  .course-detail-meta,
+  .lesson-stage-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .course-instructor-avatar {
+    width: 2.9rem;
+    height: 2.9rem;
+  }
+
+  .lesson-objective-strip {
+    display: grid;
+    gap: 0.6rem;
   }
 
   .topbar-branding {
