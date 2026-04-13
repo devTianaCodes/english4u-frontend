@@ -100,23 +100,34 @@
 }
 
 .nav-link {
-  padding: 0.55rem 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.95rem;
+  padding: 0.8rem 1.15rem;
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
-  color: var(--color-topbar-muted);
-  font-size: 0.84rem;
-  font-weight: 600;
-  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+  background: transparent;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: none;
+  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
 }
 
 .nav-link:hover,
 .nav-link.active {
-  background: rgba(20, 153, 184, 0.08);
+  background: transparent;
+  border-color: rgba(20, 153, 184, 0.2);
   color: var(--color-accent);
   box-shadow: none;
 }
 
 .nav-link-muted {
+  background: rgba(255, 243, 233, 0.78);
+  border-color: rgba(201, 167, 74, 0.24);
   color: var(--color-secondary-deep);
+  box-shadow: none;
 }
 
 .topbar-actions,
@@ -151,15 +162,16 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  border: 1px solid var(--color-topbar-border);
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
-  background: rgba(20, 153, 184, 0.04);
-  color: var(--color-text);
+  background: transparent;
+  color: white;
   transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
 .topbar-icon-button:hover {
-  background: rgba(20, 153, 184, 0.09);
+  background: rgba(20, 153, 184, 0.1);
+  border-color: rgba(20, 153, 184, 0.2);
   color: var(--color-accent);
 }
 
@@ -1963,11 +1975,17 @@
 :root[data-theme="dark"] .theme-toggle,
 :root[data-theme="dark"] .topbar-icon-button,
 :root[data-theme="dark"] .button-ghost {
-  background: rgba(88, 209, 219, 0.08);
+  background: transparent;
 }
 
 :root[data-theme="dark"] .nav-link:hover,
-:root[data-theme="dark"] .nav-link.active,
+:root[data-theme="dark"] .nav-link.active {
+  background: transparent;
+  border-color: rgba(88, 209, 219, 0.22);
+  color: var(--color-accent);
+  box-shadow: none;
+}
+
 :root[data-theme="dark"] .account-menu-link:hover,
 :root[data-theme="dark"] .account-menu-button:hover,
 :root[data-theme="dark"] .drawer-link:hover,
@@ -2114,7 +2132,6 @@
 :root[data-theme="dark"] .exercise-card span,
 :root[data-theme="dark"] .grammar-topic-link span,
 :root[data-theme="dark"] .weekly-study-column span,
-:root[data-theme="dark"] .nav-link,
 :root[data-theme="dark"] .topbar-status,
 :root[data-theme="dark"] .account-menu-header span,
 :root[data-theme="dark"] .topbar-drawer-label,
