@@ -42,6 +42,17 @@
   --color-progress-track: rgba(136, 128, 186, 0.18);
 }
 
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);

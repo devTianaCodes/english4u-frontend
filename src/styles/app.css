@@ -3031,12 +3031,6 @@
   }
 }
 
-@media (max-width: 520px) {
-  .brand-copy small {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
