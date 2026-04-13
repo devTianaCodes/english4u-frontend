@@ -147,6 +147,7 @@
 .topbar-actions {
   margin-left: auto;
   flex-shrink: 0;
+  gap: 0.35rem;
 }
 
 .topbar-auth-actions {
