@@ -20,19 +20,19 @@
 
 .topbar {
   position: sticky;
-  top: 1rem;
+  top: 0.75rem;
   z-index: 10;
   width: min(calc(100% - 2rem), var(--content-width));
-  margin: 1rem auto 0;
-  padding: 1rem 1.2rem;
+  margin: 0.85rem auto 0;
+  padding: 0.85rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-topbar-border);
   border-radius: var(--radius-xl);
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
+  background: var(--color-topbar-bg);
+  backdrop-filter: blur(18px);
   box-shadow: var(--shadow-soft);
 }
 
@@ -48,7 +48,8 @@
 
 .topbar-center {
   flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 1rem;
 }
 
 .brand {
@@ -69,47 +70,69 @@
 }
 
 .brand-copy small {
-  color: var(--color-text-muted);
-  font-size: 0.74rem;
+  color: var(--color-topbar-muted);
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .brand-mark {
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.25rem;
+  height: 2.25rem;
   display: grid;
   place-items: center;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, #1a3a52, var(--color-accent));
+  background: linear-gradient(135deg, var(--color-accent-deep), var(--color-accent));
   color: white;
 }
 
 .nav {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
 }
 
 .nav-link {
-  padding: 0.55rem 0.9rem;
+  padding: 0.55rem 0.8rem;
   border-radius: var(--radius-md);
-  color: var(--color-text-muted);
-  font-size: 0.92rem;
+  color: var(--color-topbar-muted);
+  font-size: 0.88rem;
   font-weight: 600;
   transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
 }
 
 .nav-link:hover,
 .nav-link.active {
-  background: rgba(0, 102, 204, 0.08);
+  background: rgba(27, 103, 207, 0.08);
   color: var(--color-accent);
-  box-shadow: inset 0 -2px 0 var(--color-accent);
+  box-shadow: none;
 }
 
 .nav-link-muted {
   color: var(--color-secondary-deep);
+}
+
+.topbar-utility-links {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.topbar-utility-link {
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  color: var(--color-topbar-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(127, 140, 141, 0.08);
+}
+
+.topbar-utility-link:hover,
+.topbar-utility-link.active {
+  background: rgba(27, 103, 207, 0.08);
+  color: var(--color-accent);
 }
 
 .topbar-actions,
@@ -122,36 +145,36 @@
 
 .mobile-nav-toggle {
   display: none;
-  min-height: 2.9rem;
-  padding: 0.55rem 0.9rem;
-  border: 1px solid var(--color-border);
+  min-height: 2.8rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--color-topbar-border);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.64);
   color: var(--color-text);
   font-weight: 700;
 }
 
 .theme-toggle {
-  padding: 0.55rem 0.85rem;
-  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--color-topbar-border);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(127, 140, 141, 0.06);
   color: var(--color-text);
   font-weight: 700;
-  min-height: 2.9rem;
+  min-height: 2.8rem;
 }
 
 .session-pill {
-  padding: 0.55rem 0.8rem;
+  padding: 0.5rem 0.75rem;
   border-radius: var(--radius-md);
-  background: rgba(26, 58, 82, 0.06);
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
+  background: rgba(127, 140, 141, 0.08);
+  color: var(--color-topbar-muted);
+  font-size: 0.84rem;
 }
 
 .page-frame {
   width: min(calc(100% - 2rem), var(--content-width));
-  margin: 1.5rem auto 3rem;
+  margin: 1.25rem auto 3rem;
 }
 
 .center-panel {
@@ -212,7 +235,7 @@
 
 .section-card-featured {
   background:
-    linear-gradient(180deg, rgba(245, 247, 250, 0.96), rgba(255, 255, 255, 0.98)),
+    linear-gradient(180deg, rgba(250, 251, 252, 0.98), rgba(255, 255, 255, 0.98)),
     var(--color-surface-strong);
 }
 
@@ -1633,19 +1656,19 @@
   overflow: hidden;
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-deep));
   color: white;
-  box-shadow: 0 12px 26px rgba(0, 102, 204, 0.2);
+  box-shadow: 0 10px 22px rgba(27, 103, 207, 0.16);
 }
 
 .button-ghost {
-  background: transparent;
+  background: rgba(127, 140, 141, 0.05);
   color: var(--color-text);
-  border: 1px solid transparent;
+  border: 1px solid var(--color-border);
 }
 
 .button-secondary {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.42);
   color: var(--color-accent);
-  border: 2px solid var(--color-accent);
+  border: 1px solid rgba(27, 103, 207, 0.18);
   box-shadow: none;
 }
 
@@ -1679,16 +1702,189 @@
 }
 
 .button:hover {
-  box-shadow: 0 16px 32px rgba(0, 102, 204, 0.24);
+  box-shadow: 0 12px 26px rgba(27, 103, 207, 0.18);
 }
 
 .button-secondary:hover {
-  background: rgba(0, 102, 204, 0.06);
+  background: rgba(27, 103, 207, 0.06);
 }
 
 .button-ghost:hover {
   color: var(--color-accent);
-  background: rgba(0, 102, 204, 0.05);
+  background: rgba(27, 103, 207, 0.04);
+}
+
+:root[data-theme="dark"] .topbar {
+  box-shadow: 0 18px 34px rgba(2, 7, 14, 0.28);
+}
+
+:root[data-theme="dark"] .mobile-nav-toggle,
+:root[data-theme="dark"] .theme-toggle,
+:root[data-theme="dark"] .button-ghost {
+  background: rgba(159, 176, 193, 0.08);
+}
+
+:root[data-theme="dark"] .nav-link:hover,
+:root[data-theme="dark"] .nav-link.active,
+:root[data-theme="dark"] .topbar-utility-link:hover,
+:root[data-theme="dark"] .topbar-utility-link.active {
+  background: rgba(99, 167, 255, 0.12);
+}
+
+:root[data-theme="dark"] .session-pill {
+  background: rgba(159, 176, 193, 0.08);
+}
+
+:root[data-theme="dark"] .hero-copy,
+:root[data-theme="dark"] .hero-panel,
+:root[data-theme="dark"] .section-card,
+:root[data-theme="dark"] .course-path-graphic,
+:root[data-theme="dark"] .course-path-panel,
+:root[data-theme="dark"] .course-path-metric,
+:root[data-theme="dark"] .catalog-hero-copy,
+:root[data-theme="dark"] .catalog-hero-stats,
+:root[data-theme="dark"] .dashboard-hero-copy,
+:root[data-theme="dark"] .dashboard-hero-panel,
+:root[data-theme="dark"] .course-detail-sidebar,
+:root[data-theme="dark"] .auth-panel-card,
+:root[data-theme="dark"] .course-info-card,
+:root[data-theme="dark"] .filters-panel,
+:root[data-theme="dark"] .course-section,
+:root[data-theme="dark"] .course-detail-side-notes > *,
+:root[data-theme="dark"] .catalog-stat-card,
+:root[data-theme="dark"] .dashboard-stat-card,
+:root[data-theme="dark"] .course-card,
+:root[data-theme="dark"] .course-progress-card,
+:root[data-theme="dark"] .test-drive-banner,
+:root[data-theme="dark"] .journey-panel-here,
+:root[data-theme="dark"] .journal-card,
+:root[data-theme="dark"] .dashboard-sidebar-link,
+:root[data-theme="dark"] .dashboard-focus-strip,
+:root[data-theme="dark"] .achievement-card,
+:root[data-theme="dark"] .level-progress-card,
+:root[data-theme="dark"] .lesson-sidebar-card,
+:root[data-theme="dark"] .quiz-header-panel,
+:root[data-theme="dark"] .quiz-body-panel,
+:root[data-theme="dark"] .quiz-result-panel,
+:root[data-theme="dark"] .lesson-header,
+:root[data-theme="dark"] .lesson-stage-card,
+:root[data-theme="dark"] .lesson-tab,
+:root[data-theme="dark"] .lesson-info-block,
+:root[data-theme="dark"] .vocab-item,
+:root[data-theme="dark"] .resource-card,
+:root[data-theme="dark"] .exercise-card,
+:root[data-theme="dark"] .quiz-question-card,
+:root[data-theme="dark"] .quiz-option-card,
+:root[data-theme="dark"] .review-hero-copy,
+:root[data-theme="dark"] .review-hero-stats,
+:root[data-theme="dark"] .review-session,
+:root[data-theme="dark"] .onboarding-hero-copy,
+:root[data-theme="dark"] .onboarding-hero-side,
+:root[data-theme="dark"] .onboarding-result-main,
+:root[data-theme="dark"] .onboarding-result-side,
+:root[data-theme="dark"] .weekly-study-card,
+:root[data-theme="dark"] .grammar-hero-copy,
+:root[data-theme="dark"] .grammar-hero-stats,
+:root[data-theme="dark"] .study-plan-hero-copy,
+:root[data-theme="dark"] .study-plan-hero-panel,
+:root[data-theme="dark"] .grammar-sidebar .section-card,
+:root[data-theme="dark"] .grammar-main .section-card,
+:root[data-theme="dark"] .grammar-topic-link,
+:root[data-theme="dark"] .grammar-note-card,
+:root[data-theme="dark"] .grammar-example-card,
+:root[data-theme="dark"] .course-review-card,
+:root[data-theme="dark"] .module-card,
+:root[data-theme="dark"] .module-checkpoint-card,
+:root[data-theme="dark"] .choice-card,
+:root[data-theme="dark"] .stat-chip,
+:root[data-theme="dark"] .quiz-review-card,
+:root[data-theme="dark"] .review-mode-card-active,
+:root[data-theme="dark"] .admin-row,
+:root[data-theme="dark"] .lesson-row {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+  box-shadow: var(--shadow-soft);
+}
+
+:root[data-theme="dark"] .section-card-featured,
+:root[data-theme="dark"] .journey-panel-there,
+:root[data-theme="dark"] .resource-card-highlight,
+:root[data-theme="dark"] .review-mode-card-active,
+:root[data-theme="dark"] .grammar-topic-link:hover,
+:root[data-theme="dark"] .grammar-topic-link:focus-visible,
+:root[data-theme="dark"] .grammar-topic-link-active {
+  background:
+    linear-gradient(180deg, rgba(30, 14, 56, 0.96), rgba(18, 8, 33, 0.96)),
+    var(--color-surface-strong);
+}
+
+:root[data-theme="dark"] .course-detail-copy,
+:root[data-theme="dark"] .auth-aside,
+:root[data-theme="dark"] .lesson-stage-screen,
+:root[data-theme="dark"] .course-card-visual {
+  background:
+    linear-gradient(135deg, rgba(9, 4, 20, 0.94), rgba(27, 10, 61, 0.86)),
+    var(--color-accent-deep);
+}
+
+:root[data-theme="dark"] .filter-field input,
+:root[data-theme="dark"] .filter-field select,
+:root[data-theme="dark"] .form-grid input,
+:root[data-theme="dark"] .form-grid select {
+  background: rgba(14, 7, 25, 0.72);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+:root[data-theme="dark"] .hero-meta span,
+:root[data-theme="dark"] .filter-chip,
+:root[data-theme="dark"] .course-card-badges span,
+:root[data-theme="dark"] .course-card-level,
+:root[data-theme="dark"] .course-detail-meta span,
+:root[data-theme="dark"] .module-card-count,
+:root[data-theme="dark"] .lesson-meta-row span,
+:root[data-theme="dark"] .topbar-utility-link {
+  background: rgba(136, 128, 186, 0.12);
+  border-color: rgba(136, 128, 186, 0.22);
+  color: var(--color-text);
+}
+
+:root[data-theme="dark"] .progress-bar {
+  background: rgba(136, 128, 186, 0.16);
+}
+
+:root[data-theme="dark"] .dashboard-stat-card p,
+:root[data-theme="dark"] .catalog-stat-card p,
+:root[data-theme="dark"] .support-copy,
+:root[data-theme="dark"] .section-card p,
+:root[data-theme="dark"] .metric-label,
+:root[data-theme="dark"] .eyebrow,
+:root[data-theme="dark"] .section-card-body,
+:root[data-theme="dark"] .brand-copy small,
+:root[data-theme="dark"] .course-path-panel p,
+:root[data-theme="dark"] .course-path-step-index,
+:root[data-theme="dark"] .stat-chip span,
+:root[data-theme="dark"] .vocab-item span,
+:root[data-theme="dark"] .resource-card p:last-child,
+:root[data-theme="dark"] .exercise-card span,
+:root[data-theme="dark"] .grammar-topic-link span,
+:root[data-theme="dark"] .weekly-study-column span,
+:root[data-theme="dark"] .topbar-utility-link,
+:root[data-theme="dark"] .nav-link,
+:root[data-theme="dark"] .session-pill,
+:root[data-theme="dark"] .dashboard-sidebar-link small {
+  color: var(--color-text-muted);
+}
+
+:root[data-theme="dark"] .dashboard-sidebar-link span,
+:root[data-theme="dark"] .brand-copy strong,
+:root[data-theme="dark"] .test-drive-metric strong,
+:root[data-theme="dark"] .weekly-study-overlay strong,
+:root[data-theme="dark"] .course-path-header strong,
+:root[data-theme="dark"] .course-path-panel strong,
+:root[data-theme="dark"] .course-path-metric strong {
+  color: var(--color-text);
 }
 
 .topbar :focus-visible,
@@ -2140,18 +2336,24 @@
 
   .topbar-center,
   .nav,
-  .topbar-actions {
+  .topbar-actions,
+  .topbar-utility-links {
     justify-content: flex-start;
     align-items: stretch;
   }
 
   .nav,
-  .topbar-actions {
+  .topbar-actions,
+  .topbar-utility-links {
     flex-direction: column;
   }
 
   .topbar-actions > * {
     width: 100%;
+  }
+
+  .topbar-utility-link {
+    text-align: center;
   }
 
   .topbar-center {
@@ -2179,7 +2381,8 @@
   .nav-link,
   .button,
   .button-ghost,
-  .theme-toggle {
+  .theme-toggle,
+  .topbar-utility-link {
     min-height: 3rem;
   }
 
@@ -2249,6 +2452,14 @@
   .topbar-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .topbar-branding {
+    min-width: 0;
+  }
+
+  .brand-copy small {
+    display: none;
   }
 
   .catalog-stat-card,

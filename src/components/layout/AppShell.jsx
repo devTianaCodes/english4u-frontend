@@ -4,17 +4,23 @@ import { useAuth } from "../../features/auth/AuthProvider.jsx";
 import { useTheme } from "../../features/theme/useTheme.js";
 import Button from "../ui/Button.jsx";
 
+const guestLinks = [
+  { to: "/courses", label: "Courses" },
+  { to: "/journal", label: "Journal" }
+];
+
 const learnerLinks = [
   { to: "/dashboard", label: "Dashboard" },
   { to: "/courses", label: "Courses" },
-  { to: "/journal", label: "Journal" },
   { to: "/grammar", label: "Grammar" },
   { to: "/review", label: "Review" },
-  { to: "/study-plan", label: "Study plan" },
+  { to: "/journal", label: "Journal" }
+];
+
+const learnerUtilityLinks = [
+  { to: "/study-plan", label: "Plan" },
   { to: "/certificates", label: "Certificates" },
-  { to: "/settings", label: "Settings" },
-  { to: "/onboarding", label: "Placement" },
-  { to: "/profile", label: "Profile" }
+  { to: "/onboarding", label: "Placement" }
 ];
 
 const adminLinks = [
@@ -28,6 +34,7 @@ export default function AppShell() {
   const { isLoading, logout, user } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const primaryLinks = user ? learnerLinks : guestLinks;
 
   async function handleLogout() {
     await logout();
@@ -68,7 +75,7 @@ export default function AppShell() {
         <div className={`topbar-drawer ${isMobileNavOpen ? "topbar-drawer-open" : ""}`}>
           <div className="topbar-center">
             <nav aria-label="Primary navigation" className="nav">
-              {learnerLinks.map((link) => (
+              {primaryLinks.map((link) => (
                 <NavLink key={link.to} className="nav-link" to={link.to}>
                   {link.label}
                 </NavLink>
@@ -78,9 +85,18 @@ export default function AppShell() {
                     <NavLink key={link.to} className="nav-link nav-link-muted" to={link.to}>
                       {link.label}
                     </NavLink>
-                  ))
+                ))
                 : null}
             </nav>
+            {user ? (
+              <div className="topbar-utility-links">
+                {learnerUtilityLinks.map((link) => (
+                  <NavLink key={link.to} className="topbar-utility-link" to={link.to}>
+                    {link.label}
+                  </NavLink>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <div className="topbar-actions">
@@ -96,6 +112,12 @@ export default function AppShell() {
               <span className="session-pill">Checking session...</span>
             ) : user ? (
               <>
+                <Button to="/profile" variant="ghost">
+                  Profile
+                </Button>
+                <Button to="/settings" variant="ghost">
+                  Settings
+                </Button>
                 <span className="session-pill">
                   {user.firstName} {user.lastName} · {user.role}
                 </span>

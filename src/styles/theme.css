@@ -1,52 +1,58 @@
 :root {
-  --color-bg: #f5f7fa;
-  --color-surface: rgba(255, 255, 255, 0.9);
+  --color-bg: #f3f5f7;
+  --color-surface: rgba(255, 255, 255, 0.94);
   --color-surface-strong: #ffffff;
-  --color-text: #2c3e50;
-  --color-text-muted: #7f8c8d;
-  --color-accent: #0066cc;
-  --color-accent-deep: #0052a3;
-  --color-secondary: #d4af37;
-  --color-secondary-deep: #b9931c;
-  --color-border: rgba(26, 58, 82, 0.12);
-  --shadow-soft: 0 24px 60px rgba(26, 58, 82, 0.12);
-  --color-progress-track: rgba(26, 58, 82, 0.08);
-  --radius-xl: 20px;
-  --radius-lg: 14px;
+  --color-text: #223142;
+  --color-text-muted: #68788a;
+  --color-accent: #1b67cf;
+  --color-accent-deep: #1456ad;
+  --color-secondary: #c9a74a;
+  --color-secondary-deep: #a7842e;
+  --color-border: rgba(27, 44, 63, 0.1);
+  --color-topbar-bg: rgba(255, 255, 255, 0.88);
+  --color-topbar-border: rgba(27, 44, 63, 0.08);
+  --color-topbar-muted: #5b6c7d;
+  --shadow-soft: 0 16px 36px rgba(27, 44, 63, 0.08);
+  --color-progress-track: rgba(27, 44, 63, 0.08);
+  --radius-xl: 16px;
+  --radius-lg: 12px;
   --radius-md: 8px;
-  --content-width: 1180px;
+  --content-width: 1140px;
   --font-display: "Segoe UI", "Trebuchet MS", sans-serif;
   --font-body: "Segoe UI", "Trebuchet MS", sans-serif;
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #0f1a24;
-  --color-surface: rgba(18, 30, 42, 0.9);
-  --color-surface-strong: #152231;
-  --color-text: #edf3f8;
-  --color-text-muted: #a9bac7;
-  --color-accent: #4b9cff;
-  --color-accent-deep: #2d79d8;
-  --color-secondary: #e3bf59;
-  --color-secondary-deep: #c39c2d;
-  --color-border: rgba(138, 168, 191, 0.18);
-  --shadow-soft: 0 24px 60px rgba(2, 8, 14, 0.34);
-  --color-progress-track: rgba(138, 168, 191, 0.16);
+  --color-bg: #070110;
+  --color-surface: rgba(20, 10, 35, 0.68);
+  --color-surface-strong: rgba(27, 12, 49, 0.84);
+  --color-text: #f3f4ff;
+  --color-text-muted: #b7b8cf;
+  --color-accent: #77a8ff;
+  --color-accent-deep: #4a86ea;
+  --color-secondary: #d7b55c;
+  --color-secondary-deep: #b79233;
+  --color-border: rgba(136, 128, 186, 0.24);
+  --color-topbar-bg: rgba(10, 4, 21, 0.82);
+  --color-topbar-border: rgba(136, 128, 186, 0.2);
+  --color-topbar-muted: #bec1da;
+  --shadow-soft: 0 20px 48px rgba(2, 0, 8, 0.42);
+  --color-progress-track: rgba(136, 128, 186, 0.18);
 }
 
 body {
   min-height: 100vh;
   color: var(--color-text);
   background:
-    radial-gradient(circle at top left, rgba(0, 102, 204, 0.16), transparent 30%),
-    radial-gradient(circle at top right, rgba(212, 175, 55, 0.14), transparent 26%),
-    linear-gradient(180deg, #ffffff 0%, #f5f7fa 54%, #edf2f7 100%);
+    radial-gradient(circle at top left, rgba(27, 103, 207, 0.08), transparent 28%),
+    radial-gradient(circle at top right, rgba(201, 167, 74, 0.08), transparent 24%),
+    linear-gradient(180deg, #f9fbfc 0%, #f3f5f7 52%, #edf1f4 100%);
   font-family: var(--font-body);
 }
 
 :root[data-theme="dark"] body {
   background:
-    radial-gradient(circle at top left, rgba(75, 156, 255, 0.2), transparent 28%),
-    radial-gradient(circle at top right, rgba(227, 191, 89, 0.16), transparent 24%),
-    linear-gradient(180deg, #0f1a24 0%, #132231 55%, #182837 100%);
+    radial-gradient(circle at top left, rgba(116, 92, 195, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(119, 168, 255, 0.1), transparent 24%),
+    linear-gradient(135deg, #05000d 0%, #1b0a3d 52%, #060012 100%);
 }
