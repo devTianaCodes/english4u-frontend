@@ -58,7 +58,7 @@ function YouTubeIcon() {
 
 function FooterLinkGroup({ title, links }) {
   return (
-    <div className="footer-link-group">
+    <section className="footer-column">
       <p className="footer-label">{title}</p>
       <div className="footer-link-list">
         {links.map((link) => (
@@ -67,7 +67,7 @@ function FooterLinkGroup({ title, links }) {
           </Link>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -77,40 +77,57 @@ export default function SiteFooter() {
       <div className="site-footer-shell">
         <div className="site-footer-main">
           <section className="footer-brand-block">
-            <Link className="footer-brand" to="/">
-              <span className="brand-mark footer-brand-mark">E4U</span>
-              <span className="brand-copy footer-brand-copy">
-                <strong>English4U</strong>
-                <small>Professional English paths for focused learners.</small>
-              </span>
-            </Link>
+            <div className="footer-identity-group">
+              <Link className="footer-brand" to="/">
+                <span className="brand-mark footer-brand-mark">E4U</span>
+                <span className="brand-copy footer-brand-copy">
+                  <strong>English4U</strong>
+                  <small>Professional English paths for focused learners.</small>
+                </span>
+              </Link>
+            </div>
 
-            <div className="footer-contact-block">
-              <p className="footer-label">English4U School</p>
-              <a
-                className="footer-contact-link"
-                href="https://www.google.com/maps/search/?api=1&query=Via+Monte+Napoleone+18,+20121+Milan,+Italy"
-                rel="noreferrer"
-                target="_blank"
-              >
-                Via Monte Napoleone 18
-                <br />
-                20121 Milan, Italy
-              </a>
-              <a className="footer-contact-link" href="tel:+390294753180">
-                +39 02 9475 3180
-              </a>
-              <a className="footer-contact-link" href="mailto:hello@english4u.school">
-                hello@english4u.school
-              </a>
+            <div className="footer-contact-group">
+              <p className="footer-label">Contact</p>
+              <div className="footer-contact-block">
+                <p className="footer-contact-name">English4U School</p>
+                <a
+                  className="footer-contact-link"
+                  href="https://www.google.com/maps/search/?api=1&query=Via+Monte+Napoleone+18,+20121+Milan,+Italy"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Via Monte Napoleone 18
+                  <br />
+                  20121 Milan, Italy
+                </a>
+                <a className="footer-contact-link" href="tel:+390294753180">
+                  +39 02 9475 3180
+                </a>
+                <a className="footer-contact-link" href="mailto:hello@english4u.school">
+                  hello@english4u.school
+                </a>
+              </div>
             </div>
           </section>
 
-          <FooterLinkGroup links={exploreLinks} title="Explore" />
+          <div className="footer-column footer-column-centered">
+            <FooterLinkGroup links={exploreLinks} title="Explore" />
+          </div>
 
-          <section className="footer-link-group">
-            <FooterLinkGroup links={schoolLinks} title="School" />
-            <div className="footer-social-block">
+          <section className="footer-column footer-stack-column">
+            <section className="footer-column">
+              <p className="footer-label">School</p>
+              <div className="footer-link-list">
+                {schoolLinks.map((link) => (
+                  <Link key={link.to} className="footer-link" to={link.to}>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            <section className="footer-column">
               <p className="footer-label">Follow</p>
               <div className="footer-social-row">
                 {socialLinks.map(({ href, label, icon: Icon }) => (
@@ -126,7 +143,7 @@ export default function SiteFooter() {
                   </a>
                 ))}
               </div>
-            </div>
+            </section>
           </section>
         </div>
 
