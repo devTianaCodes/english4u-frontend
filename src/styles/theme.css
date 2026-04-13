@@ -1,18 +1,20 @@
 :root {
-  --color-bg: #f3f5f7;
-  --color-surface: rgba(255, 255, 255, 0.94);
-  --color-surface-strong: #ffffff;
+  --color-bg: #f6ede8;
+  --color-surface: rgba(255, 246, 239, 0.92);
+  --color-surface-strong: #fff7f1;
+  --color-surface-soft: rgba(255, 239, 227, 0.84);
+  --color-surface-muted: rgba(255, 232, 218, 0.74);
   --color-text: #223142;
-  --color-text-muted: #68788a;
+  --color-text-muted: #746a68;
   --color-accent: #1499b8;
   --color-accent-deep: #0d7f98;
   --color-secondary: #c9a74a;
   --color-secondary-deep: #a7842e;
-  --color-border: rgba(27, 44, 63, 0.1);
-  --color-topbar-bg: rgba(255, 255, 255, 0.88);
-  --color-topbar-border: rgba(27, 44, 63, 0.08);
-  --color-topbar-muted: #5b6c7d;
-  --shadow-soft: 0 16px 36px rgba(27, 44, 63, 0.08);
+  --color-border: rgba(96, 69, 60, 0.1);
+  --color-topbar-bg: rgba(255, 246, 239, 0.88);
+  --color-topbar-border: rgba(96, 69, 60, 0.08);
+  --color-topbar-muted: #6f6665;
+  --shadow-soft: 0 16px 36px rgba(76, 48, 37, 0.08);
   --color-progress-track: rgba(27, 44, 63, 0.08);
   --radius-xl: 16px;
   --radius-lg: 12px;
@@ -44,9 +46,9 @@ body {
   min-height: 100vh;
   color: var(--color-text);
   background:
-    radial-gradient(circle at top left, rgba(20, 153, 184, 0.1), transparent 28%),
-    radial-gradient(circle at top right, rgba(201, 167, 74, 0.08), transparent 24%),
-    linear-gradient(180deg, #f9fbfc 0%, #f3f5f7 52%, #edf1f4 100%);
+    radial-gradient(circle at top left, rgba(88, 115, 191, 0.11), transparent 28%),
+    radial-gradient(circle at top right, rgba(137, 101, 199, 0.11), transparent 24%),
+    linear-gradient(135deg, #f4e7e5 0%, #efe6ef 48%, #f8efe9 100%);
   font-family: var(--font-body);
 }
 

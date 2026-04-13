@@ -1865,6 +1865,96 @@
   background: rgba(20, 153, 184, 0.04);
 }
 
+:root:not([data-theme="dark"]) .section-card-featured,
+:root:not([data-theme="dark"]) .hero-panel,
+:root:not([data-theme="dark"]) .test-drive-banner,
+:root:not([data-theme="dark"]) .journey-panel-here,
+:root:not([data-theme="dark"]) .course-path-graphic,
+:root:not([data-theme="dark"]) .course-path-panel,
+:root:not([data-theme="dark"]) .course-path-metric,
+:root:not([data-theme="dark"]) .catalog-hero-copy,
+:root:not([data-theme="dark"]) .catalog-hero-stats,
+:root:not([data-theme="dark"]) .dashboard-hero-panel,
+:root:not([data-theme="dark"]) .dashboard-sidebar-link,
+:root:not([data-theme="dark"]) .filters-panel,
+:root:not([data-theme="dark"]) .filter-field input,
+:root:not([data-theme="dark"]) .filter-field select,
+:root:not([data-theme="dark"]) .filter-chip,
+:root:not([data-theme="dark"]) .course-review-card,
+:root:not([data-theme="dark"]) .module-card,
+:root:not([data-theme="dark"]) .dashboard-stat-card,
+:root:not([data-theme="dark"]) .achievement-card,
+:root:not([data-theme="dark"]) .lesson-meta-row span,
+:root:not([data-theme="dark"]) .lesson-tab,
+:root:not([data-theme="dark"]) .lesson-info-block,
+:root:not([data-theme="dark"]) .vocab-item,
+:root:not([data-theme="dark"]) .resource-card,
+:root:not([data-theme="dark"]) .exercise-card,
+:root:not([data-theme="dark"]) .progress-dot,
+:root:not([data-theme="dark"]) .quiz-option-card,
+:root:not([data-theme="dark"]) .review-mode-card-active,
+:root:not([data-theme="dark"]) .choice-card,
+:root:not([data-theme="dark"]) .stat-chip,
+:root:not([data-theme="dark"]) .lesson-row,
+:root:not([data-theme="dark"]) .quiz-review-card,
+:root:not([data-theme="dark"]) .admin-row,
+:root:not([data-theme="dark"]) .grammar-hero-copy,
+:root:not([data-theme="dark"]) .grammar-hero-stats,
+:root:not([data-theme="dark"]) .study-plan-hero-copy,
+:root:not([data-theme="dark"]) .study-plan-hero-panel,
+:root:not([data-theme="dark"]) .grammar-sidebar .section-card,
+:root:not([data-theme="dark"]) .grammar-main .section-card,
+:root:not([data-theme="dark"]) .grammar-topic-link,
+:root:not([data-theme="dark"]) .grammar-note-card,
+:root:not([data-theme="dark"]) .grammar-example-card {
+  background: var(--color-surface-soft);
+  border-color: var(--color-border);
+}
+
+:root:not([data-theme="dark"]) .hero-panel,
+:root:not([data-theme="dark"]) .section-card-featured,
+:root:not([data-theme="dark"]) .dashboard-hero-panel,
+:root:not([data-theme="dark"]) .course-path-graphic,
+:root:not([data-theme="dark"]) .weekly-study-card,
+:root:not([data-theme="dark"]) .resource-card-highlight {
+  background:
+    linear-gradient(180deg, rgba(255, 248, 243, 0.92), rgba(255, 239, 230, 0.88)),
+    var(--color-surface-strong);
+}
+
+:root:not([data-theme="dark"]) .test-drive-metric,
+:root:not([data-theme="dark"]) .course-path-panel-active,
+:root:not([data-theme="dark"]) .course-path-metric,
+:root:not([data-theme="dark"]) .dashboard-sidebar-link,
+:root:not([data-theme="dark"]) .course-review-card,
+:root:not([data-theme="dark"]) .module-card,
+:root:not([data-theme="dark"]) .dashboard-stat-card,
+:root:not([data-theme="dark"]) .achievement-card,
+:root:not([data-theme="dark"]) .lesson-tab,
+:root:not([data-theme="dark"]) .lesson-info-block,
+:root:not([data-theme="dark"]) .vocab-item,
+:root:not([data-theme="dark"]) .resource-card,
+:root:not([data-theme="dark"]) .exercise-card,
+:root:not([data-theme="dark"]) .quiz-option-card,
+:root:not([data-theme="dark"]) .choice-card,
+:root:not([data-theme="dark"]) .stat-chip,
+:root:not([data-theme="dark"]) .quiz-review-card,
+:root:not([data-theme="dark"]) .grammar-topic-link,
+:root:not([data-theme="dark"]) .grammar-note-card,
+:root:not([data-theme="dark"]) .grammar-example-card {
+  box-shadow: 0 12px 28px rgba(124, 76, 53, 0.05);
+}
+
+:root:not([data-theme="dark"]) .course-path-panel-active,
+:root:not([data-theme="dark"]) .review-mode-card-active,
+:root:not([data-theme="dark"]) .grammar-topic-link:hover,
+:root:not([data-theme="dark"]) .grammar-topic-link:focus-visible,
+:root:not([data-theme="dark"]) .grammar-topic-link-active {
+  background:
+    linear-gradient(135deg, rgba(255, 203, 166, 0.2), rgba(20, 153, 184, 0.08)),
+    var(--color-surface-soft);
+}
+
 :root[data-theme="dark"] .topbar {
   box-shadow: 0 18px 34px rgba(2, 7, 14, 0.28);
 }
