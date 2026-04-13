@@ -13,6 +13,16 @@ export default function ProfilePage() {
   const [saveMessage, setSaveMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [formState, setFormState] = useState(preferences);
+  const resolvedProfile = profile ?? {
+    firstName: user?.firstName ?? "",
+    lastName: user?.lastName ?? "",
+    email: user?.email ?? "",
+    role: user?.role ?? "student",
+    targetLevel: "Not set yet",
+    placementScore: null,
+    placementTakenAt: null,
+    placementHistory: []
+  };
 
   useEffect(() => {
     let isCancelled = false;
@@ -85,26 +95,26 @@ export default function ProfilePage() {
     <div className="grid grid-2">
       <SectionCard eyebrow="Profile" title="Learner settings">
         <p>
-          {profile
-            ? `${profile.firstName} ${profile.lastName} is currently enrolled as a ${profile.role} account.`
-            : `Signed in as ${user?.email ?? "an active learner"}.`}
+          {resolvedProfile.firstName || resolvedProfile.lastName
+            ? `${[resolvedProfile.firstName, resolvedProfile.lastName].filter(Boolean).join(" ")} is currently enrolled as a ${resolvedProfile.role} account.`
+            : `Signed in as ${resolvedProfile.email || "an active learner"}.`}
         </p>
         {error ? <p className="form-error">{error}</p> : null}
       </SectionCard>
       <SectionCard eyebrow="Account" title="Progress summary">
-        <p>Target level: {profile?.targetLevel ?? "B1"}.</p>
-        {profile?.placementScore !== null ? (
+        <p>Target level: {resolvedProfile.targetLevel ?? "Not set yet"}.</p>
+        {resolvedProfile.placementScore !== null && resolvedProfile.placementScore !== undefined ? (
           <p className="support-copy">
-            Latest placement score: {profile.placementScore}
-            {profile.placementTakenAt ? ` · ${new Date(profile.placementTakenAt).toLocaleDateString()}` : ""}
+            Latest placement score: {resolvedProfile.placementScore}
+            {resolvedProfile.placementTakenAt ? ` · ${new Date(resolvedProfile.placementTakenAt).toLocaleDateString()}` : ""}
           </p>
         ) : (
           <p className="support-copy">No placement result saved yet. Complete onboarding to personalize the path.</p>
         )}
-        {profile?.placementHistory?.length ? (
+        {resolvedProfile.placementHistory?.length ? (
           <div className="stack-sm">
             <p className="eyebrow">Recent attempts</p>
-            {profile.placementHistory.map((attempt, index) => (
+            {resolvedProfile.placementHistory.map((attempt, index) => (
               <div key={attempt.id} className="dashboard-focus-strip">
                 <span>{index === 0 ? "Latest" : `Attempt ${index + 1}`}</span>
                 <strong>{attempt.recommendedLevel} · {attempt.score}</strong>
@@ -135,7 +145,7 @@ export default function ProfilePage() {
               name="sessionsPerWeek"
               onChange={handleChange}
               type="number"
-              value={formState.sessionsPerWeek}
+              value={formState?.sessionsPerWeek ?? preferences.sessionsPerWeek}
             />
           </label>
           <label>
@@ -146,12 +156,12 @@ export default function ProfilePage() {
               name="minutesPerSession"
               onChange={handleChange}
               type="number"
-              value={formState.minutesPerSession}
+              value={formState?.minutesPerSession ?? preferences.minutesPerSession}
             />
           </label>
           <label className="profile-field-span">
             Focus area
-            <select name="focus" onChange={handleChange} value={formState.focus}>
+            <select name="focus" onChange={handleChange} value={formState?.focus ?? preferences.focus}>
               <option>Speaking confidence</option>
               <option>Grammar accuracy</option>
               <option>Vocabulary growth</option>
