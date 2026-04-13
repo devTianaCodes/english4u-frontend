@@ -4,8 +4,8 @@
   --color-surface-strong: #ffffff;
   --color-text: #223142;
   --color-text-muted: #68788a;
-  --color-accent: #1b67cf;
-  --color-accent-deep: #1456ad;
+  --color-accent: #1499b8;
+  --color-accent-deep: #0d7f98;
   --color-secondary: #c9a74a;
   --color-secondary-deep: #a7842e;
   --color-border: rgba(27, 44, 63, 0.1);
@@ -28,8 +28,8 @@
   --color-surface-strong: rgba(27, 12, 49, 0.84);
   --color-text: #f3f4ff;
   --color-text-muted: #b7b8cf;
-  --color-accent: #77a8ff;
-  --color-accent-deep: #4a86ea;
+  --color-accent: #58d1db;
+  --color-accent-deep: #28aebb;
   --color-secondary: #d7b55c;
   --color-secondary-deep: #b79233;
   --color-border: rgba(136, 128, 186, 0.24);
@@ -44,7 +44,7 @@ body {
   min-height: 100vh;
   color: var(--color-text);
   background:
-    radial-gradient(circle at top left, rgba(27, 103, 207, 0.08), transparent 28%),
+    radial-gradient(circle at top left, rgba(20, 153, 184, 0.1), transparent 28%),
     radial-gradient(circle at top right, rgba(201, 167, 74, 0.08), transparent 24%),
     linear-gradient(180deg, #f9fbfc 0%, #f3f5f7 52%, #edf1f4 100%);
   font-family: var(--font-body);
@@ -52,7 +52,7 @@ body {
 
 :root[data-theme="dark"] body {
   background:
-    radial-gradient(circle at top left, rgba(116, 92, 195, 0.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(119, 168, 255, 0.1), transparent 24%),
+    radial-gradient(circle at top left, rgba(40, 174, 187, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(88, 209, 219, 0.12), transparent 24%),
     linear-gradient(135deg, #05000d 0%, #1b0a3d 52%, #060012 100%);
 }

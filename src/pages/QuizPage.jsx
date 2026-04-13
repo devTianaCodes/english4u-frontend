@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/ui/Button.jsx";
 import { apiRequest } from "../services/api.js";
@@ -11,6 +11,7 @@ export default function QuizPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const resultRef = useRef(null);
 
   useEffect(() => {
     let isCancelled = false;
@@ -21,6 +22,9 @@ export default function QuizPage() {
 
         if (!isCancelled) {
           setQuiz(response);
+          setAnswers({});
+          setResult(null);
+          setError("");
           setActiveIndex(0);
         }
       } catch (loadError) {
@@ -72,6 +76,16 @@ export default function QuizPage() {
       setIsSubmitting(false);
     }
   }
+
+  useEffect(() => {
+    if (!result) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [result]);
 
   if (!quiz && !error) {
     return (
@@ -190,7 +204,7 @@ export default function QuizPage() {
       </section>
 
       {result ? (
-        <section className="quiz-result-panel">
+        <section ref={resultRef} className="quiz-result-panel">
           <div className="quiz-result-score">
             <span className="metric-label">Result</span>
             <strong>{result.score}%</strong>
