@@ -1,7 +1,57 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthSplitLayout from "../components/layout/AuthSplitLayout.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
+
+function PasswordToggleButton({ visible, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={visible ? "Hide password" : "Show password"}
+      aria-pressed={visible}
+      style={{
+        position: "absolute",
+        top: "50%",
+        right: "0.9rem",
+        transform: "translateY(-50%)",
+        border: 0,
+        background: "transparent",
+        color: "var(--muted-foreground, #5f6572)",
+        cursor: "pointer",
+        padding: 0
+      }}
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ width: "1.2rem", height: "1.2rem" }}>
+        <path d="M2 12c2.6-4.1 6-6.1 10-6.1s7.4 2 10 6.1c-2.6 4.1-6 6.1-10 6.1S4.6 16.1 2 12Z" />
+        <circle cx="12" cy="12" r="3.2" />
+        {visible ? null : <path d="M4 4l16 16" />}
+      </svg>
+    </button>
+  );
+}
+
+function readDemoPayload() {
+  if (typeof window === "undefined" || !window.location.hash.startsWith("#demo=")) {
+    return null;
+  }
+
+  const params = new URLSearchParams(window.location.hash.slice("#demo=".length));
+  return {
+    email: params.get("email") ?? "",
+    password: params.get("password") ?? "",
+    redirect: params.get("redirect"),
+    autologin: params.get("autologin") === "1"
+  };
+}
+
+function clearDemoHash() {
+  if (typeof window === "undefined" || !window.location.hash.startsWith("#demo=")) {
+    return;
+  }
+
+  window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}`);
+}
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -13,6 +63,63 @@ export default function LoginPage() {
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [demoLogin, setDemoLogin] = useState(null);
+  const [demoRedirect, setDemoRedirect] = useState(null);
+  const autoLoginStarted = useRef(false);
+
+  useEffect(() => {
+    function applyDemoPayload() {
+      const payload = readDemoPayload();
+      if (!payload) {
+        return;
+      }
+
+      setFormData({
+        email: payload.email,
+        password: payload.password
+      });
+      setDemoRedirect(payload.redirect);
+
+      if (!payload.autologin || !payload.email || !payload.password || autoLoginStarted.current) {
+        return;
+      }
+
+      autoLoginStarted.current = true;
+      clearDemoHash();
+      setDemoLogin({
+        email: payload.email,
+        password: payload.password
+      });
+    }
+
+    applyDemoPayload();
+    window.addEventListener("hashchange", applyDemoPayload);
+    return () => window.removeEventListener("hashchange", applyDemoPayload);
+  }, []);
+
+  useEffect(() => {
+    if (!demoLogin || isSubmitting) {
+      return;
+    }
+
+    async function runDemoLogin() {
+      setError("");
+      setIsSubmitting(true);
+      try {
+        await login(demoLogin);
+        navigate(demoRedirect || location.state?.from || "/dashboard");
+      } catch (submitError) {
+        setError(submitError.message);
+        autoLoginStarted.current = false;
+      } finally {
+        setIsSubmitting(false);
+        setDemoLogin(null);
+      }
+    }
+
+    void runDemoLogin();
+  }, [demoLogin, demoRedirect, isSubmitting, location.state, login, navigate]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -29,7 +136,7 @@ export default function LoginPage() {
 
     try {
       await login(formData);
-      navigate(location.state?.from ?? "/dashboard");
+      navigate(demoRedirect || location.state?.from || "/dashboard");
     } catch (submitError) {
       setError(submitError.message);
     } finally {
@@ -53,6 +160,7 @@ export default function LoginPage() {
           text: "Track streak, study plan, checkpoint results, and next lesson in one place."
         }
       ]}
+      highlightsVariant="plain"
       isSubmitting={isSubmitting}
       submitLabel={isSubmitting ? "Logging in..." : "Log in"}
       text="Return to a clear learning dashboard with structured units, focused lessons, and visible weekly momentum."
@@ -70,7 +178,20 @@ export default function LoginPage() {
         </label>
         <label>
           Password
-          <input name="password" onChange={handleChange} placeholder="••••••••" type="password" value={formData.password} />
+          <span style={{ position: "relative", display: "block" }}>
+            <input
+              name="password"
+              onChange={handleChange}
+              placeholder="••••••••"
+              type={isPasswordVisible ? "text" : "password"}
+              value={formData.password}
+              style={{ paddingRight: "3rem" }}
+            />
+            <PasswordToggleButton
+              visible={isPasswordVisible}
+              onToggle={() => setIsPasswordVisible((current) => !current)}
+            />
+          </span>
         </label>
         {error ? <p className="form-error">{error}</p> : null}
       </form>

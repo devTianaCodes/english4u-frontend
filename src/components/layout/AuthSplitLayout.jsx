@@ -5,6 +5,7 @@ export default function AuthSplitLayout({
   title,
   text,
   highlights,
+  highlightsVariant = "cards",
   formId,
   submitLabel,
   isSubmitting,
@@ -16,9 +17,9 @@ export default function AuthSplitLayout({
         <p className="eyebrow">{eyebrow}</p>
         <h1>{title}</h1>
         <p className="auth-text">{text}</p>
-        <div className="auth-highlights">
+        <div className={`auth-highlights auth-highlights-${highlightsVariant}`}>
           {highlights.map((highlight) => (
-            <div key={highlight.label} className="auth-highlight-card">
+            <div key={highlight.label} className={`auth-highlight-card auth-highlight-card-${highlightsVariant}`}>
               <span className="metric-label">{highlight.label}</span>
               <strong>{highlight.value}</strong>
               <p>{highlight.text}</p>

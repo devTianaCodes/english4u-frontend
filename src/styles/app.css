@@ -907,6 +907,10 @@
   gap: 1rem;
 }
 
+.auth-highlights-plain {
+  gap: 1.15rem;
+}
+
 .catalog-hero-stats,
 .dashboard-stats-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -918,6 +922,22 @@
   display: grid;
   gap: 0.35rem;
   min-width: 0;
+}
+
+.auth-highlight-card-plain {
+  gap: 0.25rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.auth-highlight-card-plain strong {
+  font-size: 1.06rem;
+}
+
+.auth-highlight-card-plain span {
+  color: #1db8c8;
 }
 
 .catalog-stat-card strong,
@@ -1424,6 +1444,13 @@
 .auth-highlight-card {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.auth-highlights-plain .auth-highlight-card {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .inline-link {
