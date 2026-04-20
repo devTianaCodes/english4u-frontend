@@ -2161,6 +2161,7 @@
 }
 
 :root[data-theme="dark"] .topbar {
+  background: var(--color-topbar-bg);
   box-shadow: 0 18px 34px rgba(2, 7, 14, 0.28);
 }
 
