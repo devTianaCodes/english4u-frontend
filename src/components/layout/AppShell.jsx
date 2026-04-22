@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthProvider.jsx";
 import { useTheme } from "../../features/theme/useTheme.js";
+import { HOME_PATH } from "../../services/paths.js";
 import Button from "../ui/Button.jsx";
 import SiteFooter from "./SiteFooter.jsx";
 
@@ -91,7 +92,7 @@ export default function AppShell() {
   async function handleLogout() {
     setIsAccountMenuOpen(false);
     await logout();
-    navigate("/");
+    navigate(HOME_PATH);
   }
 
   useEffect(() => {
@@ -133,7 +134,7 @@ export default function AppShell() {
 
       <header className="topbar">
         <div className="topbar-branding">
-          <NavLink className="brand" to="/">
+          <NavLink className="brand" to={HOME_PATH}>
             <span className="brand-mark">E4U</span>
             <span className="brand-copy">
               <strong>English4U</strong>

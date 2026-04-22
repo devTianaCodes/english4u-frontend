@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "../components/ui/Button.jsx";
 import { apiRequest } from "../services/api.js";
+import { buildCoursePath } from "../services/paths.js";
 
 const placementQuestions = [
   {
@@ -238,7 +239,7 @@ export default function OnboardingPage() {
             <div className="section-card-footer">
               <Button to="/dashboard">Go to dashboard</Button>
               {result.recommendedCourse?.id ? (
-                <Button to={`/courses/${result.recommendedCourse.id}`} variant="secondary">
+                <Button to={buildCoursePath(result.recommendedCourse)} variant="secondary">
                   Open recommended course
                 </Button>
               ) : (

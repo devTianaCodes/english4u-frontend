@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Button from "../components/ui/Button.jsx";
 import { apiRequest } from "../services/api.js";
+import { buildCoursePath, buildLessonPath } from "../services/paths.js";
 
 export default function QuizPage() {
-  const { quizId } = useParams();
+  const { quizId: quizSlug } = useParams();
   const [activeIndex, setActiveIndex] = useState(0);
   const [quiz, setQuiz] = useState(null);
   const [answers, setAnswers] = useState({});
@@ -18,7 +19,7 @@ export default function QuizPage() {
 
     async function loadQuiz() {
       try {
-        const response = await apiRequest(`/quizzes/${quizId}`);
+        const response = await apiRequest(`/quizzes/${quizSlug}`);
 
         if (!isCancelled) {
           setQuiz(response);
@@ -39,7 +40,7 @@ export default function QuizPage() {
     return () => {
       isCancelled = true;
     };
-  }, [quizId]);
+  }, [quizSlug]);
 
   const answeredCount = Object.keys(answers).length;
   const currentQuestion = quiz?.questions[activeIndex] ?? null;
@@ -64,7 +65,7 @@ export default function QuizPage() {
         }))
       };
 
-      const response = await apiRequest(`/quizzes/${quizId}/submit`, {
+      const response = await apiRequest(`/quizzes/${quizSlug}/submit`, {
         method: "POST",
         body: JSON.stringify(payload)
       });
@@ -110,7 +111,7 @@ export default function QuizPage() {
         <header className="quiz-header-panel">
           <div className="stack-sm">
             <p className="eyebrow">Practice quiz</p>
-            <h1>{quiz?.title ?? quizId}</h1>
+            <h1>{quiz?.title ?? quizSlug}</h1>
             <p>{quiz?.description ?? "Loading quiz content from the backend."}</p>
           </div>
 
@@ -174,7 +175,7 @@ export default function QuizPage() {
           <div className="quiz-footer-panel">
             <div className="button-row">
               {quiz?.lessonId ? (
-                <Button to={`/lessons/${quiz.lessonId}`} variant="ghost">
+                <Button to={buildLessonPath(quiz.lessonSlug ?? quiz.lessonId)} variant="ghost">
                   Back to lesson
                 </Button>
               ) : null}
@@ -253,8 +254,11 @@ export default function QuizPage() {
           ) : null}
 
           <div className="section-card-footer">
-            {result.nextLesson ? <Button to={`/lessons/${result.nextLesson.id}`}>Next lesson</Button> : <Button to="/dashboard">Back to dashboard</Button>}
-            <Button to={result.courseId ? `/courses/${result.courseId}` : "/courses"} variant="secondary">
+            {result.nextLesson ? <Button to={buildLessonPath(result.nextLesson)}>Next lesson</Button> : <Button to="/dashboard">Back to dashboard</Button>}
+            <Button
+              to={result.courseSlug || result.courseId ? buildCoursePath(result.courseSlug ?? result.courseId) : "/courses"}
+              variant="secondary"
+            >
               Return to course
             </Button>
           </div>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { HOME_PATH } from "../../services/paths.js";
 
 const exploreLinks = [
   { to: "/dashboard", label: "Dashboard" },
@@ -78,7 +79,7 @@ export default function SiteFooter() {
         <div className="site-footer-main">
           <section className="footer-brand-block">
             <div className="footer-identity-group">
-              <Link className="footer-brand" to="/">
+              <Link className="footer-brand" to={HOME_PATH}>
                 <span className="brand-mark footer-brand-mark">E4U</span>
                 <span className="brand-copy footer-brand-copy">
                   <strong>English4U</strong>

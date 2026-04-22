@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Button from "../components/ui/Button.jsx";
 import { apiRequest } from "../services/api.js";
+import { buildLessonPath, buildQuizPath } from "../services/paths.js";
 
 function buildUnitProgress(unit, completedLessonSlugs, nextLessonId) {
   const completedLessons = unit.lessons.filter((lesson) => completedLessonSlugs.has(lesson.id)).length;
@@ -22,7 +23,7 @@ function renderRating(rating) {
 }
 
 export default function CourseDetailPage() {
-  const { courseId } = useParams();
+  const { courseId: courseSlug } = useParams();
   const [course, setCourse] = useState(null);
   const [progress, setProgress] = useState(null);
   const [error, setError] = useState("");
@@ -33,7 +34,7 @@ export default function CourseDetailPage() {
     async function loadCourseAndProgress() {
       try {
         const [courseResponse, progressResponse] = await Promise.all([
-          apiRequest(`/courses/${courseId}`),
+          apiRequest(`/courses/${courseSlug}`),
           apiRequest("/dashboard/me")
         ]);
 
@@ -53,7 +54,7 @@ export default function CourseDetailPage() {
     return () => {
       isCancelled = true;
     };
-  }, [courseId]);
+  }, [courseSlug]);
 
   const completedLessonSlugs = new Set(progress?.completedLessonSlugs ?? []);
   const nextLessonId = progress?.nextLesson?.id ?? null;
@@ -75,7 +76,7 @@ export default function CourseDetailPage() {
       <section className="course-detail-hero">
         <div className="course-detail-copy">
           <p className="eyebrow">Course detail</p>
-          <h1>{course?.title ?? courseId}</h1>
+          <h1>{course?.title ?? courseSlug}</h1>
           <p>
             {course
               ? `${course.level} track with ${course.unitCount} units and ${course.lessonCount} lessons. ${course.summary}`
@@ -91,7 +92,7 @@ export default function CourseDetailPage() {
               </div>
 
               <div className="button-row">
-                <Button to={`/lessons/${nextLessonId ?? firstLessonId}`}>{nextLessonId ? "Continue course" : "Start first lesson"}</Button>
+                <Button to={buildLessonPath(nextLessonId ?? firstLessonId)}>{nextLessonId ? "Continue course" : "Start first lesson"}</Button>
                 <Button to="/dashboard" variant="secondary">Open dashboard</Button>
               </div>
             </>
@@ -137,7 +138,14 @@ export default function CourseDetailPage() {
                 <div className="progress-bar-fill" style={{ width: `${activeUnit.progress.progress}%` }} />
               </div>
               <div className="section-card-footer">
-                <Button to={activeUnit.progress.nextLesson ? `/lessons/${activeUnit.progress.nextLesson.id}` : `/quizzes/${activeUnit.lessons[activeUnit.lessons.length - 1]?.id}-quiz`} variant="secondary">
+                <Button
+                  to={
+                    activeUnit.progress.nextLesson
+                      ? buildLessonPath(activeUnit.progress.nextLesson)
+                      : buildQuizPath(`${activeUnit.lessons[activeUnit.lessons.length - 1]?.id}-quiz`)
+                  }
+                  variant="secondary"
+                >
                   {activeUnit.progress.nextLesson ? "Open next lesson" : "Open checkpoint"}
                 </Button>
               </div>
@@ -196,7 +204,7 @@ export default function CourseDetailPage() {
                             <p className="support-copy">Next up</p>
                           ) : null}
                         </div>
-                        <Button to={`/lessons/${lesson.id}`} variant="secondary">
+                        <Button to={buildLessonPath(lesson)} variant="secondary">
                           {completedLessonSlugs.has(lesson.id) ? "Review" : "Open"}
                         </Button>
                       </div>
@@ -218,8 +226,8 @@ export default function CourseDetailPage() {
                       <Button
                         to={
                           unit.progress.nextLesson
-                            ? `/lessons/${unit.progress.nextLesson.id}`
-                            : `/quizzes/${unit.lessons[unit.lessons.length - 1]?.id}-quiz`
+                            ? buildLessonPath(unit.progress.nextLesson)
+                            : buildQuizPath(`${unit.lessons[unit.lessons.length - 1]?.id}-quiz`)
                         }
                         variant="secondary"
                       >

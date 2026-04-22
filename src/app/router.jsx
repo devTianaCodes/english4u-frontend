@@ -1,9 +1,10 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 import AppShell from "../components/layout/AppShell.jsx";
 import RouteFallback from "../components/ui/RouteFallback.jsx";
 import GuestRoute from "../features/auth/GuestRoute.jsx";
 import ProtectedRoute from "../features/auth/ProtectedRoute.jsx";
+import { HOME_PATH } from "../services/paths.js";
 
 const AdminCollectionPage = lazy(() => import("../pages/AdminCollectionPage.jsx"));
 const AdminHomePage = lazy(() => import("../pages/AdminHomePage.jsx"));
@@ -33,7 +34,8 @@ export const router = createBrowserRouter([
     path: "/",
     element: <AppShell />,
     children: [
-      { index: true, element: withSuspense(<LandingPage />) },
+      { index: true, element: <Navigate to={HOME_PATH} replace /> },
+      { path: "home", element: withSuspense(<LandingPage />) },
       {
         path: "login",
         element: (

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/ui/Button.jsx";
 import { apiRequest } from "../services/api.js";
+import { buildCoursePath, buildLessonPath, buildQuizPath } from "../services/paths.js";
 
 const lessonTabs = [
   { id: "overview", label: "Overview" },
@@ -21,7 +22,7 @@ function groupBlocks(blocks) {
 }
 
 export default function LessonPage() {
-  const { lessonId } = useParams();
+  const { lessonId: lessonSlug } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
   const [lesson, setLesson] = useState(null);
   const [completion, setCompletion] = useState(null);
@@ -33,7 +34,7 @@ export default function LessonPage() {
 
     async function loadLesson() {
       try {
-        const response = await apiRequest(`/lessons/${lessonId}`);
+        const response = await apiRequest(`/lessons/${lessonSlug}`);
 
         if (!isCancelled) {
           setLesson(response);
@@ -51,7 +52,7 @@ export default function LessonPage() {
     return () => {
       isCancelled = true;
     };
-  }, [lessonId]);
+  }, [lessonSlug]);
 
   const groupedBlocks = useMemo(() => groupBlocks(lesson?.blocks ?? []), [lesson?.blocks]);
 
@@ -60,7 +61,7 @@ export default function LessonPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await apiRequest(`/progress/lessons/${lessonId}/complete`, {
+      const response = await apiRequest(`/progress/lessons/${lessonSlug}/complete`, {
         method: "POST"
       });
 
@@ -182,7 +183,7 @@ export default function LessonPage() {
           <header className="lesson-header">
             <div className="lesson-header-top">
               {lesson?.courseId ? (
-                <Link className="button button-ghost" to={`/courses/${lesson.courseId}`}>
+                <Link className="button button-ghost" to={buildCoursePath(lesson.courseSlug ?? lesson.courseId)}>
                   Back to course
                 </Link>
               ) : null}
@@ -199,7 +200,7 @@ export default function LessonPage() {
 
             <div className="stack-sm">
               <p className="eyebrow">Lesson player</p>
-              <h1>{lesson?.title ?? lessonId}</h1>
+              <h1>{lesson?.title ?? lessonSlug}</h1>
               <p>{lesson?.summary ?? "Loading lesson content from the backend."}</p>
             </div>
 
@@ -290,13 +291,13 @@ export default function LessonPage() {
             <h2>Navigation</h2>
             <div className="stack-sm">
               {lesson?.previousLesson ? (
-                <Button to={`/lessons/${lesson.previousLesson.id}`} variant="secondary">
+                <Button to={buildLessonPath(lesson.previousLesson)} variant="secondary">
                   Previous lesson
                 </Button>
               ) : null}
-              <Button to={`/quizzes/${lesson?.quizId ?? `${lessonId}-quiz`}`}>Finish with quiz</Button>
+              <Button to={buildQuizPath(lesson?.quizSlug ?? lesson?.quizId ?? `${lessonSlug}-quiz`)}>Finish with quiz</Button>
               {lesson?.nextLesson ? (
-                <Button to={`/lessons/${lesson.nextLesson.id}`} variant="secondary">
+                <Button to={buildLessonPath(lesson.nextLesson)} variant="secondary">
                   Next lesson
                 </Button>
               ) : null}

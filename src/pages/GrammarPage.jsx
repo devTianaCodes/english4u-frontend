@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/ui/Button.jsx";
 import { apiRequest, endpoints } from "../services/api.js";
+import { buildLessonPath, buildQuizPath } from "../services/paths.js";
 
 export default function GrammarPage() {
   const { topicId } = useParams();
@@ -177,8 +178,8 @@ export default function GrammarPage() {
                         <p>{lesson.summary}</p>
                       </div>
                       <div className="button-row">
-                        <Button to={`/lessons/${lesson.id}`}>Open lesson</Button>
-                        <Button to={`/quizzes/${lesson.id}-quiz`} variant="secondary">Quiz</Button>
+                        <Button to={buildLessonPath(lesson)}>Open lesson</Button>
+                        <Button to={buildQuizPath(`${lesson.id}-quiz`)} variant="secondary">Quiz</Button>
                       </div>
                     </article>
                   ))}

@@ -4,6 +4,7 @@ import WeeklyStudyGraphic from "../components/ui/WeeklyStudyGraphic.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
 import { useStudyPreferences } from "../features/progress/useStudyPreferences.js";
 import { apiRequest, endpoints } from "../services/api.js";
+import { buildLessonPath, buildQuizPath } from "../services/paths.js";
 
 function buildContinueCards(dashboard) {
   return [
@@ -12,7 +13,7 @@ function buildContinueCards(dashboard) {
       text: dashboard?.nextLesson
         ? `${dashboard.nextLesson.unitTitle} · ${dashboard.nextLesson.title}`
         : `${dashboard?.currentCourse ?? "Your current course"} is ready for the next lesson.`,
-      to: dashboard?.nextLesson ? `/lessons/${dashboard.nextLesson.id}` : "/courses",
+      to: dashboard?.nextLesson ? buildLessonPath(dashboard.nextLesson) : "/courses",
       progress: Math.min(dashboard?.completedLessons ? dashboard.completedLessons * 5 : 18, 100)
     },
     {
@@ -29,7 +30,11 @@ function buildContinueCards(dashboard) {
       text: dashboard?.nextLesson
         ? `Checkpoint for ${dashboard.nextLesson.title} is ready when you finish the lesson.`
         : "Finish the current lesson to unlock the next checkpoint.",
-      to: dashboard?.nextLesson?.quizId ? `/quizzes/${dashboard.nextLesson.quizId}` : "/courses",
+      to: dashboard?.nextLesson?.quizSlug
+        ? buildQuizPath(dashboard.nextLesson.quizSlug)
+        : dashboard?.nextLesson?.quizId
+          ? buildQuizPath(dashboard.nextLesson.quizId)
+          : "/courses",
       progress: dashboard?.quizAverage ?? 0
     }
   ];
@@ -189,7 +194,7 @@ export default function DashboardPage() {
                 : `Welcome ${user?.firstName ?? "back"}. Keep the next action obvious and continue your current learning path.`}
             </p>
             <div className="button-row">
-              <Button to={dashboard?.nextLesson ? `/lessons/${dashboard.nextLesson.id}` : "/courses"}>
+              <Button to={dashboard?.nextLesson ? buildLessonPath(dashboard.nextLesson) : "/courses"}>
                 Continue learning
               </Button>
               <Button to="/courses" variant="secondary">Browse courses</Button>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Button from "../components/ui/Button.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
 import { apiRequest, endpoints } from "../services/api.js";
+import { buildCoursePath, buildLessonPath } from "../services/paths.js";
 
 export default function CoursesPage() {
   const { user } = useAuth();
@@ -174,8 +175,8 @@ export default function CoursesPage() {
                 </p>
               </div>
               <div className="section-card-footer">
-                <Button to={currentCourseId ? `/courses/${currentCourseId}` : "/dashboard"}>Open recommended path</Button>
-                <Button to={dashboard.nextLesson ? `/lessons/${dashboard.nextLesson.id}` : "/dashboard"} variant="secondary">
+                <Button to={currentCourseId ? buildCoursePath(currentCourseId) : "/dashboard"}>Open recommended path</Button>
+                <Button to={dashboard.nextLesson ? buildLessonPath(dashboard.nextLesson) : "/dashboard"} variant="secondary">
                   Continue next lesson
                 </Button>
               </div>
@@ -221,7 +222,7 @@ export default function CoursesPage() {
                             : `${course.level} self-paced learners`}
                       </strong>
                     </div>
-                    <Button to={`/courses/${course.id}`} variant="secondary">Explore course</Button>
+                    <Button to={buildCoursePath(course)} variant="secondary">Explore course</Button>
                   </div>
                 </div>
               </article>
