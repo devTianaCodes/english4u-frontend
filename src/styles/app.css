@@ -2371,6 +2371,7 @@
 :root[data-theme="dark"] .dashboard-sidebar-link span,
 :root[data-theme="dark"] .brand-copy strong,
 :root[data-theme="dark"] .footer-brand-copy strong,
+:root[data-theme="dark"] .grammar-topic-tag,
 :root[data-theme="dark"] .test-drive-metric strong,
 :root[data-theme="dark"] .weekly-study-overlay strong,
 :root[data-theme="dark"] .course-path-header strong,
@@ -2712,6 +2713,11 @@
   top: 7.5rem;
 }
 
+.grammar-sidebar-stack {
+  display: grid;
+  gap: 1rem;
+}
+
 .grammar-topic-list,
 .grammar-rule-grid {
   display: grid;
@@ -2735,9 +2741,29 @@
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
+.grammar-topic-link-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 .grammar-topic-link span {
   color: var(--color-text-muted);
   font-size: 0.92rem;
+}
+
+.grammar-topic-tag {
+  flex-shrink: 0;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(15, 154, 142, 0.22);
+  border-radius: 999px;
+  background: rgba(15, 154, 142, 0.08);
+  color: #1396a4;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .grammar-topic-link:hover,

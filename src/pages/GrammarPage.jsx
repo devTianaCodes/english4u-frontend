@@ -4,13 +4,34 @@ import Button from "../components/ui/Button.jsx";
 import { apiRequest, endpoints } from "../services/api.js";
 import { buildLessonPath, buildQuizPath } from "../services/paths.js";
 
+const SAVED_TOPICS_KEY = "e4u-saved-grammar-topics";
+
+function loadSavedTopicIds() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(SAVED_TOPICS_KEY) ?? "[]");
+    return Array.isArray(parsed) ? parsed.filter((value) => typeof value === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function GrammarPage() {
   const { topicId } = useParams();
   const [topics, setTopics] = useState([]);
   const [topic, setTopic] = useState(null);
   const [error, setError] = useState("");
+  const [savedTopicIds, setSavedTopicIds] = useState(loadSavedTopicIds);
 
   const selectedTopicId = useMemo(() => topicId ?? topics[0]?.id ?? null, [topicId, topics]);
+  const savedTopics = useMemo(
+    () => topics.filter((entry) => savedTopicIds.includes(entry.id)),
+    [topics, savedTopicIds]
+  );
+  const isSaved = topic ? savedTopicIds.includes(topic.id) : false;
 
   useEffect(() => {
     let isCancelled = false;
@@ -64,6 +85,24 @@ export default function GrammarPage() {
     };
   }, [selectedTopicId]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(SAVED_TOPICS_KEY, JSON.stringify(savedTopicIds));
+  }, [savedTopicIds]);
+
+  function toggleSavedTopic() {
+    if (!topic) {
+      return;
+    }
+
+    setSavedTopicIds((current) =>
+      current.includes(topic.id) ? current.filter((entry) => entry !== topic.id) : [...current, topic.id]
+    );
+  }
+
   if (!topics.length && !error) {
     return (
       <div className="stack-lg">
@@ -107,19 +146,45 @@ export default function GrammarPage() {
 
       <section className="grammar-layout">
         <aside className="grammar-sidebar">
-          <div className="section-card">
-            <p className="eyebrow">Topics</p>
-            <div className="grammar-topic-list">
-              {topics.map((entry) => (
-                <Link
-                  key={entry.id}
-                  className={`grammar-topic-link ${selectedTopicId === entry.id ? "grammar-topic-link-active" : ""}`}
-                  to={`/grammar/${entry.id}`}
-                >
-                  <strong>{entry.title}</strong>
-                  <span>{entry.level} · {entry.lessonCount} lesson{entry.lessonCount === 1 ? "" : "s"}</span>
-                </Link>
-              ))}
+          <div className="grammar-sidebar-stack">
+            {savedTopics.length ? (
+              <div className="section-card">
+                <p className="eyebrow">Saved topics</p>
+                <div className="grammar-topic-list">
+                  {savedTopics.map((entry) => (
+                    <Link
+                      key={entry.id}
+                      className={`grammar-topic-link ${selectedTopicId === entry.id ? "grammar-topic-link-active" : ""}`}
+                      to={`/grammar/${entry.id}`}
+                    >
+                      <div className="grammar-topic-link-header">
+                        <strong>{entry.title}</strong>
+                        <span className="grammar-topic-tag">Saved</span>
+                      </div>
+                      <span>{entry.level} · {entry.lessonCount} lesson{entry.lessonCount === 1 ? "" : "s"}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <div className="section-card">
+              <p className="eyebrow">Topics</p>
+              <div className="grammar-topic-list">
+                {topics.map((entry) => (
+                  <Link
+                    key={entry.id}
+                    className={`grammar-topic-link ${selectedTopicId === entry.id ? "grammar-topic-link-active" : ""}`}
+                    to={`/grammar/${entry.id}`}
+                  >
+                    <div className="grammar-topic-link-header">
+                      <strong>{entry.title}</strong>
+                      {savedTopicIds.includes(entry.id) ? <span className="grammar-topic-tag">Saved</span> : null}
+                    </div>
+                    <span>{entry.level} · {entry.lessonCount} lesson{entry.lessonCount === 1 ? "" : "s"}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </aside>
@@ -131,6 +196,11 @@ export default function GrammarPage() {
                 <p className="eyebrow">{topic.level} grammar topic</p>
                 <h2>{topic.title}</h2>
                 <p>{topic.summary}</p>
+                <div className="button-row">
+                  <Button onClick={toggleSavedTopic} variant="secondary">
+                    {isSaved ? "Remove from saved" : "Save topic"}
+                  </Button>
+                </div>
                 <div className="grammar-rule-grid">
                   {topic.rules.map((rule) => (
                     <article key={rule} className="grammar-note-card">
