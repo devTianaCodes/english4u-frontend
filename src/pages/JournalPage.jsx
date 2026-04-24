@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import Button from "../components/ui/Button.jsx";
 
 const entries = [
@@ -23,7 +24,42 @@ const entries = [
   }
 ];
 
+const SAVED_JOURNAL_KEY = "e4u-saved-journal-entries";
+
+function loadSavedJournalTitles() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(SAVED_JOURNAL_KEY) ?? "[]");
+    return Array.isArray(parsed) ? parsed.filter((value) => typeof value === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function JournalPage() {
+  const [savedTitles, setSavedTitles] = useState(loadSavedJournalTitles);
+  const savedEntries = useMemo(
+    () => entries.filter((entry) => savedTitles.includes(entry.title)),
+    [savedTitles]
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(SAVED_JOURNAL_KEY, JSON.stringify(savedTitles));
+  }, [savedTitles]);
+
+  function toggleSavedEntry(title) {
+    setSavedTitles((current) =>
+      current.includes(title) ? current.filter((entry) => entry !== title) : [...current, title]
+    );
+  }
+
   return (
     <div className="stack-lg">
       <section className="section-card section-card-featured">
@@ -35,12 +71,47 @@ export default function JournalPage() {
         </p>
       </section>
 
+      {savedEntries.length ? (
+        <section className="section-card">
+          <div className="dashboard-section-heading">
+            <div>
+              <p className="eyebrow">Saved journal</p>
+              <h2>Return to the advice you want to keep</h2>
+            </div>
+            <p className="support-copy">Saved articles stay on this device so you can revisit the strongest study reminders quickly.</p>
+          </div>
+          <div className="grid grid-2">
+            {savedEntries.map((entry) => (
+              <article key={`saved-${entry.title}`} className="journal-card journal-card-large">
+                <div className="journal-card-header">
+                  <span className="course-card-level">{entry.category}</span>
+                  <span className="journal-card-tag">Saved</span>
+                </div>
+                <h2>{entry.title}</h2>
+                <p>{entry.text}</p>
+                <div className="section-card-footer">
+                  <Button onClick={() => toggleSavedEntry(entry.title)} variant="secondary">Remove</Button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <section className="grid grid-2">
         {entries.map((entry) => (
           <article key={entry.title} className="journal-card journal-card-large">
-            <span className="course-card-level">{entry.category}</span>
+            <div className="journal-card-header">
+              <span className="course-card-level">{entry.category}</span>
+              {savedTitles.includes(entry.title) ? <span className="journal-card-tag">Saved</span> : null}
+            </div>
             <h2>{entry.title}</h2>
             <p>{entry.text}</p>
+            <div className="section-card-footer">
+              <Button onClick={() => toggleSavedEntry(entry.title)} variant="secondary">
+                {savedTitles.includes(entry.title) ? "Remove from saved" : "Save article"}
+              </Button>
+            </div>
           </article>
         ))}
       </section>

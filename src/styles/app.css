@@ -721,6 +721,26 @@
   min-width: 0;
 }
 
+.journal-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.journal-card-tag {
+  flex-shrink: 0;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(15, 154, 142, 0.22);
+  border-radius: 999px;
+  background: rgba(15, 154, 142, 0.08);
+  color: #1396a4;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .course-path-graphic {
   display: grid;
   gap: 1rem;
