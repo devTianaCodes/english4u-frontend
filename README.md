@@ -22,7 +22,3 @@ Copy `.env.example` values into a local `.env` file when needed.
 - `src/pages`: route-level page components
 - `src/services`: API utilities
 - `src/styles`: reset, theme, and app styles
-
-## Important Rules
-- AI planning files live in `/Users/parents/Developer/Project English4U/.english4u-planning`, not in this repository.
-- Do not commit any changes without explicit user permission.
