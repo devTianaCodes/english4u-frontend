@@ -994,6 +994,10 @@
   align-items: start;
 }
 
+.catalog-layout {
+  align-items: stretch;
+}
+
 .dashboard-layout-shell {
   display: grid;
   grid-template-columns: minmax(240px, 0.3fr) minmax(0, 1fr);
@@ -2229,7 +2233,7 @@
 
 :root[data-theme="dark"] .account-menu,
 :root[data-theme="dark"] .topbar-drawer {
-  background: rgba(10, 4, 21, 0.94);
+  background: rgba(70, 76, 93, 0.96);
 }
 
 :root[data-theme="dark"] .site-footer-shell {
@@ -2240,7 +2244,7 @@
 :root[data-theme="dark"] .site-footer {
   border-top-color: rgba(112, 104, 164, 0.22);
   background:
-    linear-gradient(180deg, rgba(14, 7, 28, 0.92), rgba(23, 11, 43, 0.88)),
+    linear-gradient(180deg, rgba(83, 89, 106, 0.94), rgba(93, 98, 115, 0.9)),
     var(--color-surface);
 }
 
@@ -2324,7 +2328,7 @@
 :root[data-theme="dark"] .grammar-topic-link:focus-visible,
 :root[data-theme="dark"] .grammar-topic-link-active {
   background:
-    linear-gradient(180deg, rgba(30, 14, 56, 0.96), rgba(18, 8, 33, 0.96)),
+    linear-gradient(180deg, rgba(109, 114, 131, 0.96), rgba(96, 102, 118, 0.96)),
     var(--color-surface-strong);
 }
 
@@ -2333,7 +2337,7 @@
 :root[data-theme="dark"] .lesson-stage-screen,
 :root[data-theme="dark"] .course-card-visual {
   background:
-    linear-gradient(135deg, rgba(9, 4, 20, 0.94), rgba(27, 10, 61, 0.86)),
+    linear-gradient(135deg, rgba(77, 84, 102, 0.94), rgba(72, 99, 120, 0.9)),
     var(--color-accent-deep);
 }
 
@@ -2341,7 +2345,7 @@
 :root[data-theme="dark"] .filter-field select,
 :root[data-theme="dark"] .form-grid input,
 :root[data-theme="dark"] .form-grid select {
-  background: rgba(14, 7, 25, 0.72);
+  background: rgba(109, 114, 131, 0.84);
   color: var(--color-text);
   border-color: var(--color-border);
 }
@@ -2353,13 +2357,13 @@
 :root[data-theme="dark"] .course-detail-meta span,
 :root[data-theme="dark"] .module-card-count,
 :root[data-theme="dark"] .lesson-meta-row span {
-  background: rgba(136, 128, 186, 0.12);
-  border-color: rgba(136, 128, 186, 0.22);
+  background: rgba(214, 218, 234, 0.2);
+  border-color: rgba(214, 218, 234, 0.34);
   color: var(--color-text);
 }
 
 :root[data-theme="dark"] .progress-bar {
-  background: rgba(136, 128, 186, 0.16);
+  background: rgba(214, 218, 234, 0.28);
 }
 
 :root[data-theme="dark"] .dashboard-stat-card p,

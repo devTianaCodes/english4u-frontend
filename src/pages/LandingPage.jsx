@@ -100,14 +100,6 @@ export default function LandingPage() {
           </p>
         </div>
         <div className="test-drive-actions">
-          <div className="test-drive-metric">
-            <strong>15 min</strong>
-            <span>guided diagnostic</span>
-          </div>
-          <div className="test-drive-metric">
-            <strong>A1-A2</strong>
-            <span>current course range</span>
-          </div>
           <Button to={user ? "/onboarding" : "/register"}>Open test</Button>
         </div>
       </section>

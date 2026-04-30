@@ -25,21 +25,21 @@
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #070110;
-  --color-surface: rgba(20, 10, 35, 0.68);
-  --color-surface-strong: rgba(27, 12, 49, 0.84);
-  --color-text: #f3f4ff;
-  --color-text-muted: #b7b8cf;
+  --color-bg: #3e4253;
+  --color-surface: rgba(90, 95, 112, 0.9);
+  --color-surface-strong: rgba(102, 108, 125, 0.95);
+  --color-text: #fbfaff;
+  --color-text-muted: #d8d5e8;
   --color-accent: #58d1db;
   --color-accent-deep: #28aebb;
   --color-secondary: #d7b55c;
   --color-secondary-deep: #b79233;
-  --color-border: rgba(136, 128, 186, 0.24);
-  --color-topbar-bg: rgba(10, 4, 21, 0.82);
-  --color-topbar-border: rgba(136, 128, 186, 0.2);
-  --color-topbar-muted: #bec1da;
-  --shadow-soft: 0 20px 48px rgba(2, 0, 8, 0.42);
-  --color-progress-track: rgba(136, 128, 186, 0.18);
+  --color-border: rgba(214, 218, 234, 0.4);
+  --color-topbar-bg: rgba(70, 76, 93, 0.94);
+  --color-topbar-border: rgba(214, 218, 234, 0.34);
+  --color-topbar-muted: #dddaf0;
+  --shadow-soft: 0 18px 42px rgba(22, 26, 38, 0.2);
+  --color-progress-track: rgba(214, 218, 234, 0.32);
 }
 
 html,
@@ -65,7 +65,7 @@ body {
 
 :root[data-theme="dark"] body {
   background:
-    radial-gradient(circle at top left, rgba(40, 174, 187, 0.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(88, 209, 219, 0.12), transparent 24%),
-    linear-gradient(135deg, #05000d 0%, #1b0a3d 52%, #060012 100%);
+    radial-gradient(circle at top left, rgba(88, 209, 219, 0.22), transparent 28%),
+    radial-gradient(circle at top right, rgba(215, 181, 92, 0.14), transparent 24%),
+    linear-gradient(135deg, #373c4d 0%, #494e60 52%, #3b4153 100%);
 }

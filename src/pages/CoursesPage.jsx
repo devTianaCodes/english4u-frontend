@@ -183,11 +183,6 @@ export default function CoursesPage() {
             </section>
           ) : null}
 
-          <div className="courses-toolbar">
-            <p className="support-copy">{filteredCourses.length} course{filteredCourses.length === 1 ? "" : "s"} available</p>
-            <Button to="/onboarding" variant="secondary">Take placement test</Button>
-          </div>
-
           <div className="courses-grid">
             {filteredCourses.map((course) => (
               <article key={course.id} className="course-card">
