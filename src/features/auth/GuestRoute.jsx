@@ -1,8 +1,11 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthProvider.jsx";
 
 export default function GuestRoute({ children }) {
   const { isLoading, user } = useAuth();
+  const location = useLocation();
+  const browserHash = typeof window === "undefined" ? "" : window.location.hash;
+  const isDemoLogin = location.hash.startsWith("#demo=") || browserHash.startsWith("#demo=");
 
   if (isLoading) {
     return (
@@ -13,7 +16,7 @@ export default function GuestRoute({ children }) {
     );
   }
 
-  if (user) {
+  if (user && !isDemoLogin) {
     return <Navigate replace to="/dashboard" />;
   }
 
