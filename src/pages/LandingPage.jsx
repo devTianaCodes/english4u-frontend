@@ -1,7 +1,7 @@
 import SectionCard from "../components/layout/SectionCard.jsx";
 import { useAuth } from "../features/auth/AuthProvider.jsx";
 import Button from "../components/ui/Button.jsx";
-import CoursePathGraphic from "../components/ui/CoursePathGraphic.jsx";
+import classroomHero from "../assets/classroom-hero.png";
 
 const experienceTracks = [
   {
@@ -63,30 +63,29 @@ export default function LandingPage() {
   return (
     <div className="stack-xl">
       <section className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">Professional English learning platform</p>
-          <h1>Master English. Transform your future.</h1>
-          <p className="hero-text">
-            English4U combines guided placement, structured lessons, and visible progress so learners always know their
-            next step.
-          </p>
-          <div className="hero-meta">
-            <span>Guided courses</span>
-            <span>Placement-first</span>
-            <span>Certificate-ready rhythm</span>
+        <div className="hero-copy hero-copy-with-image">
+          <div className="hero-copy-content">
+            <p className="eyebrow">Professional English learning platform</p>
+            <h1>Master English. Transform your future.</h1>
+            <p className="hero-text">
+              English4U combines guided placement, structured lessons, and visible progress so learners always know their
+              next step.
+            </p>
+            <div className="hero-meta">
+              <span>Guided courses</span>
+              <span>Placement-first</span>
+              <span>Certificate-ready rhythm</span>
+            </div>
+            <div className="button-row">
+              <Button size="lg" to={user ? "/dashboard" : "/register"}>
+                {user ? "Open dashboard" : "Start your journey"}
+              </Button>
+            </div>
           </div>
-          <div className="button-row">
-            <Button size="lg" to={user ? "/dashboard" : "/register"}>
-              {user ? "Open dashboard" : "Start your journey"}
-            </Button>
-            <Button size="lg" to={user ? "/onboarding" : "/register"} variant="secondary">
-              Take free level test
-            </Button>
-          </div>
-        </div>
 
-        <div className="hero-panel">
-          <CoursePathGraphic />
+          <div className="hero-image-panel">
+            <img alt="Teacher and student happily learning English in a bright classroom" src={classroomHero} />
+          </div>
         </div>
       </section>
 
@@ -100,7 +99,9 @@ export default function LandingPage() {
           </p>
         </div>
         <div className="test-drive-actions">
-          <Button to={user ? "/onboarding" : "/register"}>Open test</Button>
+          <Button size="lg" to={user ? "/onboarding" : "/register"} variant="secondary">
+            Take free level test
+          </Button>
         </div>
       </section>
 
